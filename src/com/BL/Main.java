@@ -1,6 +1,4 @@
-package com.Project;
-
-import javax.swing.*;
+package com.BL;
 
 public class Main {
 
