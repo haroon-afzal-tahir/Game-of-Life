@@ -10,7 +10,7 @@ public class Board {
 	private int rows;
 	private int columns;
 	
-	private boolean[][] board;
+	private Cell[][] board;
 	
 	// -------------------------------------------------------------
 	// ------------------------ CONSTRUCTOR ------------------------
@@ -20,9 +20,13 @@ public class Board {
 		this.rows = rows;
 		this.columns = columns;
 		
-		this.board = new boolean[rows][columns];
+		this.board = new Cell[rows][columns];
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.columns; j++) {
+				this.board[i][j] = new Cell(i, j);
+			}
+		}
 	}
-	
 	
 	// -------------------------------------------------------------
 	// ------------------------ FUNCTIONS --------------------------
@@ -53,7 +57,7 @@ public class Board {
 		for (int i = 0; i < this.rows; i++) {
 			String line = "|";
 			for (int j = 0; j < this.columns; j++) {
-				line += (this.board[i][j]) ? "*" : ".";
+				line += (this.board[i][j].isAlive()) ? "*" : ".";
     			
     			/*
     			if (!this.board[j][i]) {
@@ -71,19 +75,19 @@ public class Board {
 	}
 	
 	public void setAlive(int row, int column) {
-		this.board[row][column] = true;
+		this.board[row][column].setValues(row, column, true);
 	}
 	
 	public void setDead(int row, int column) {
-		this.board[row][column] = false;
+		this.board[row][column].setValues(row, column, false);
 	}
 	
 	public boolean isAlive(int row, int column) {
-		return this.board[row][column];
+		return this.board[row][column].isAlive();
 	}
 	
 	public void ToggleState(int row, int column) {
-		this.board[row][column] = !this.board[row][column];
+		this.board[row][column].setAlive(!this.board[row][column].isAlive());
 	}
 	
 	// This Function Determines The Alive Neighbors With Respect To The Selected Cell
@@ -103,20 +107,25 @@ public class Board {
 	public boolean getState(int row, int column) {
 		if (row < 0 || row >= this.rows) return false;
 		if (column < 0 || column >= this.columns) return false;
-		return this.board[row][column];
+		return this.board[row][column].isAlive();
 	}
 	
 	public void step() {
-		boolean[][] newBoard = new boolean[this.rows][this.columns];
+		Cell[][] newBoard = new Cell[this.rows][this.columns];
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.columns; j++) {
+				newBoard[i][j] = new Cell(i, j);
+			}
+		}
 		for (int i = 0; i < this.rows; i++) {
 			for (int j = 0; j < this.columns; j++) {
 				int aliveNeighbors = CountAliveNeighbors(i, j);
 				if (getState(i, j)) {
 					if (aliveNeighbors == 2 || aliveNeighbors == 3) {
-						newBoard[i][j] = true;
+						newBoard[i][j].setAlive(true);
 					}
 				} else if (aliveNeighbors == 3) {
-					newBoard[i][j] = true;
+					newBoard[i][j].setAlive(true);
 				}
 			}
 		}
@@ -147,11 +156,11 @@ public class Board {
 		this.columns = columns;
 	}
 	
-	public boolean[][] getBoard() {
+	public Cell[][] getBoard() {
 		return board;
 	}
 	
-	public void setBoard(boolean[][] board) {
+	public void setBoard(Cell[][] board) {
 		this.board = board;
 	}
 }
