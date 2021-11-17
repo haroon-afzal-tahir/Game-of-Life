@@ -97,8 +97,69 @@ BEGIN
 END
 GO
 ------------------------------------------------------------------------------------
+---Drop Procedure Load Board
+
+CREATE PROCEDURE loadBoard
+@gameID INT,
+@GCols INT OUTPUT,
+@GRows INT OUTPUT,
+@speed FLOAT OUTPUT,
+@counter INT OUTPUT,
+@score INT OUTPUT
+
+AS
+BEGIN
+     ----Check if state_id exists or not, which is going to be loaded
+	 IF EXISTS(
+	    SELECT @gameid
+		FROM dbo.[state] S			
+		WHERE S.stateID = @gameid
+	)
+	-------Loading rows and columns of board
+	BEGIN
+	     SELECT @GRows, @GCols
+		 FROM dbo.board B
+		 WHERE B.sid = @gameid AND @GCols = B.columnsnum AND @GRows = B.rowsnum
+	END 
+	-----Loading speed,counter and score of game 
+	BEGIN
+	     SELECT @speed,@counter,@score
+		 FROM dbo.Extras E
+		 WHERE E.stateid=@gameid AND @speed=E.speed AND @score=E.score AND @counter=E.counter
+        END
+END
+--------------------------------------------------------------------------------------------------
+----Drop Procedure Save Cell
+
+CREATE PROCEDURE saveCell
+@gameID INT,
+@rowNum INT,
+@colNum INT
+
+AS
+BEGIN
+      ----Saving GameId, row number and column number of Cell
+      BEGIN
+	       INSERT INTO [dbo].cell
+		(
+		    [state_id],
+		    rownum,
+		    columnNum
+		)
+		VALUES
+		(   @gameID, -- state_id - int
+		    @rowNum,    -- rownum - int
+		    @colNum    -- columnNum - int
+		)
+
+     END
+END
+---------------------------------------------------------------------------------------------
+
+
 
 --drop procedure LoadCells
+
 CREATE PROCEDURE LoadCells
 @gameid INT,
 @rownum INT OUTPUT,
