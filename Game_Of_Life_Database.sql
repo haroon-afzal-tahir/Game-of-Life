@@ -181,3 +181,61 @@ BEGIN
 END
 
 --------------------------------------------------------------------------
+
+---- Drop Procedure to view Cell
+
+CREATE PROCEDURE viewCell
+@gameId INT,
+@rowNums INT OUTPUT,
+@colsNums INT OUTPUT
+
+AS
+BEGIN
+      --checking if the state exists or not which is going to be viewed
+	IF EXISTS ( 
+		SELECT @gameId
+		FROM dbo.[state] S			
+		WHERE S.stateID = @gameId
+	)	
+	BEGIN
+		SELECT @rowNums, @colsNums
+		FROM dbo.cell C
+		WHERE C.state_id = @gameid AND @colsNums = C.columnNum AND @rowNums = C.rownum
+	END 
+END
+
+--------------------------------------------------------------------------------------------
+
+-----Drop Procedure View Board
+CREATE PROCEDURE viewBoard
+@gameID INT,
+@gridCols INT OUTPUT,
+@gridRows INT OUTPUT,
+@speed FLOAT OUTPUT,
+@counter INT OUTPUT,
+@score INT OUTPUT
+
+AS
+BEGIN
+     ----Check if state_id exists or not, which is going to be viewed
+	 IF EXISTS(
+	    SELECT @gameID
+		FROM dbo.[state] S			
+		WHERE S.stateID = @gameID
+	)
+	-------view rows and columns of board
+	BEGIN
+	     SELECT @gridRows, @gridCols
+		 FROM dbo.board B
+		 WHERE B.sid = @gameID AND @gridCols = B.columnsnum AND @gridRows = B.rowsnum
+	END 
+	-----view speed,counter and score of game 
+	BEGIN
+	     SELECT @speed,@counter,@score
+		 FROM dbo.Extras E
+		 WHERE E.stateid=@gameid AND @speed=E.speed AND @score=E.score AND @counter=E.counter
+    END
+END
+--------------------------------------------------------------------------------------------
+
+
