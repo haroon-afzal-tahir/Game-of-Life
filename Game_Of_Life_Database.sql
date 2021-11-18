@@ -238,4 +238,18 @@ BEGIN
 END
 --------------------------------------------------------------------------------------------
 
-
+--drop procedure delete_state
+CREATE PROCEDURE delete_state
+@gameid INT
+--@flag int output
+AS
+BEGIN
+	--checking if the game id exists or not
+	IF EXISTS ( 
+		SELECT @gameid
+		FROM dbo.[state] S			
+		WHERE S.stateID = @gameid
+	)	
+	DELETE FROM dbo.state 
+	WHERE stateID = @gameid
+END
