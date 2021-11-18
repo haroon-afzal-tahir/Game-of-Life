@@ -1,8 +1,26 @@
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.GridPane?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<GridPane xmlns:fx="http://javafx.com/fxml"
-          fx:controller="com.UI.Controller" alignment="center" hgap="10" vgap="10">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane alignment="BOTTOM_CENTER" hgap="20" vgap="20" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.UI.Controller">
+    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Start" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Stop" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Next" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Restart" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Lexicon" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+    <columnConstraints>
+        <ColumnConstraints />
+        <ColumnConstraints />
+        <ColumnConstraints />
+        <ColumnConstraints />
+        <ColumnConstraints />
+        <ColumnConstraints />
+        <ColumnConstraints />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+    </rowConstraints>
 </GridPane>
