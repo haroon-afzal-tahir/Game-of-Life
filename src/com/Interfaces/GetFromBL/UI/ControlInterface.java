@@ -1,9 +1,9 @@
 package com.Interfaces.GetFromBL.UI;
 
 public interface ControlInterface {
-	int getSpeed();
+	int getSpeed(int speed);
 	
-	int getZoom();
+	int getZoom(int zoom);
 	
-	int getGenerations();
+	int getGenerations(int generations);
 }
