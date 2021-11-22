@@ -2,13 +2,13 @@ Create database GameOfLifedb
 go
 use GameOfLifedb
 go
---drop table state
+--drop table state;
 CREATE TABLE [state](
 	stateID INT PRIMARY KEY
 )
 GO
 
---drop table cell
+--drop table cell;
 CREATE TABLE cell(
 	state_id	INT	FOREIGN KEY REFERENCES[state](stateID),
 	rownum INT	NOT null,
@@ -25,7 +25,7 @@ ON DELETE CASCADE
 GO
 
 
---drop table board
+--drop table board;
 CREATE TABLE board(
 	[sid]	INT	FOREIGN KEY REFERENCES[state](stateID) NOT NULL,  --changed
 	rowsnum INT		NOT NULL,
@@ -40,7 +40,7 @@ ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
 
---drop table extras
+--drop table extras;
 CREATE TABLE Extras(
 	stateid	INT	FOREIGN KEY REFERENCES[state](stateID) NOT NULL,
 	score	INT,
@@ -56,7 +56,7 @@ ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
 -------------------------------------------------------------------------------------------
---drop procedure SaveBoard
+--drop procedure SaveBoard;
 
 CREATE PROCEDURE SaveBoard
 @gameID INT,
@@ -97,7 +97,7 @@ BEGIN
 END
 GO
 ------------------------------------------------------------------------------------
----Drop Procedure Load Board
+---Drop Procedure Load Board;
 
 CREATE PROCEDURE loadBoard
 @gameID INT,
@@ -129,7 +129,7 @@ BEGIN
         END
 END
 --------------------------------------------------------------------------------------------------
-----Drop Procedure Save Cell
+----Drop Procedure Save Cell;
 
 CREATE PROCEDURE saveCell
 @gameID INT,
@@ -158,7 +158,7 @@ END
 
 
 
---drop procedure LoadCells
+--drop procedure LoadCells;
 
 CREATE PROCEDURE LoadCells
 @gameid INT,
@@ -182,7 +182,7 @@ END
 
 --------------------------------------------------------------------------
 
----- Drop Procedure to view Cell
+---- Drop Procedure to view Cell;
 
 CREATE PROCEDURE viewCell
 @gameId INT,
@@ -206,7 +206,7 @@ END
 
 --------------------------------------------------------------------------------------------
 
------Drop Procedure View Board
+-----Drop Procedure View Board;
 CREATE PROCEDURE viewBoard
 @gameID INT,
 @gridCols INT OUTPUT,
@@ -238,7 +238,7 @@ BEGIN
 END
 --------------------------------------------------------------------------------------------
 
---drop procedure delete_state
+--drop procedure delete_state;
 CREATE PROCEDURE delete_state
 @gameid INT,
 @flag int output
