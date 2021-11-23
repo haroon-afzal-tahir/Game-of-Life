@@ -1,5 +1,7 @@
 package com.Interfaces.GetFromBL.DB;
 
+import com.BL.Game;
+
 public interface ViewState {
-	void view(int gameNo);
+	Game view(int gameId);
 }

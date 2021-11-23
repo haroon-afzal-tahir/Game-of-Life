@@ -165,4 +165,14 @@ public class Board {
 	public void setBoard(Cell[][] board) {
 		this.board = board;
 	}
+	
+	public Cell getCell(int i, int j) {
+		return this.board[i][j];
+	}
+	
+	public void setCell(int i, int j) {
+		this.board[i][j].setX(i);
+		this.board[i][j].setY(j);
+		this.board[i][j].setAlive(true);
+	}
 }

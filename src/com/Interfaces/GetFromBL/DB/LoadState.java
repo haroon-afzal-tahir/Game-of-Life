@@ -1,5 +1,7 @@
 package com.Interfaces.GetFromBL.DB;
 
+import com.BL.Game;
+
 public interface LoadState {
-	void load(int gameID, int counter, int speed, int score);
+	Game load(int gameID);
 }
