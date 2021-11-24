@@ -1,32 +1,74 @@
 package com.Interfaces.GetFromBL.DB;
-
-import com.BL.Game;
-
-import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
 public class LoadStateclass implements LoadState {
+
 	@Override
-	public Game load(int gameID) {
-		// TODO Auto-generated method stub
+	public Game load(String filename) {
 		// TODO Auto-generated method stub
 		Game ret_gameobj = new Game();
-		int ch = 0;
-		var filename = "file" + gameID + ".txt";
-		int generation = 0, counter = 0;
+		filename = filename + ".txt";
+		String line;
+		int x = 0, y = 0;
 		try {
-			FileReader fr = new FileReader(filename);
-			// read from FileReader till the end of file
-			
-			while ((ch = fr.read()) != -1)
-			    System.out.println((char)ch);
-			
-			// close the file
-			    fr.close();
+				FileReader fr = new FileReader(filename);
+				BufferedReader bufferedReader = new BufferedReader(fr);
+				// read from FileReader 
+				//read total rows of the grid
+				line = bufferedReader.readLine();
+				int rows = Integer.parseInt(line);
+				//System.out.println(rows);
+				
+				ret_gameobj.getBoard().setRows(rows);
+							
+				//total columns of the grid 
+				line = bufferedReader.readLine();
+				int columns = Integer.parseInt(line);
+				//System.out.println(columns);
+				
+				ret_gameobj.getBoard().setColumns(columns);
+				
+				//generations
+				line = bufferedReader.readLine();
+				int generations = Integer.parseInt(line);
+				//System.out.println(generations);
+				
+				ret_gameobj.getcontrols().setgenerations(generations);
+				
+				//speed
+				line = bufferedReader.readLine();
+				float speed = Float.parseFloat(line);
+				//System.out.println(speed);
+				
+				ret_gameobj.getcontrols().setspeedfactor(speed);
+				
+				//read the indexes of the alive cells
+				while (x != -1 && y !=-1) {
+					//row number of a cell
+					line = bufferedReader.readLine();
+					x = Integer.parseInt(line);
+					//System.out.println(x);
+					
+					//column number of a cell
+					line = bufferedReader.readLine();
+					y = Integer.parseInt(line);
+					//System.out.println(y);
+					
+					ret_gameobj.getBoard().setCell(x, y);
+				}
+				
+				// close the file
+				fr.close();
 			}
 			catch (IOException e) {
 	            e.printStackTrace();
 	        }
 		return ret_gameobj;
-	}
+	}	
 }
