@@ -12,9 +12,28 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+    
+        GridClass grids = new GridClass();  //creates grid obj
+
+
+        //-----grids---//
+
+
+       Scene scene = new Scene(grids, 640,600);
+       primaryStage.setScene(scene);
+       primaryStage.show();
+        grids.draw();
+        //---buttons---//
+
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("GUI_Buttons");
-        primaryStage.setScene(new Scene(root, 400, 275));
-        primaryStage.show();
+       Stage buttonStage = new Stage();
+        buttonStage.setTitle("GUI_Buttons ");
+
+        Scene buttonScene = new Scene(root, 640,600);
+        buttonStage.setScene(buttonScene);
+        buttonStage.show();
+
+
     }
+
 }
