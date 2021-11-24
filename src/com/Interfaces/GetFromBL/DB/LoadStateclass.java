@@ -1,14 +1,13 @@
 package com.Interfaces.GetFromBL.DB;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileReader;
+
+import com.BL.Game;
+
 import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class LoadStateclass implements LoadState {
-
+	
 	@Override
 	public Game load(String filename) {
 		// TODO Auto-generated method stub
@@ -62,13 +61,12 @@ public class LoadStateclass implements LoadState {
 					
 					ret_gameobj.getBoard().setCell(x, y);
 				}
-				
-				// close the file
-				fr.close();
-			}
-			catch (IOException e) {
-	            e.printStackTrace();
-	        }
+			
+			// close the file
+			fr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return ret_gameobj;
-	}	
+	}
 }
