@@ -4,16 +4,13 @@
 <?import javafx.scene.layout.*?>
 
 <GridPane alignment="BOTTOM_CENTER" hgap="20" vgap="20" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.UI.Controller">
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Start" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Stop" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Next" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Restart" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Lexicon" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Clear" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Save_State" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Load_State" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="View_State" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Delete_State" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+    <Button alignment="CENTER" minWidth="50.0" onMouseClicked="#Start" style="-fx-background-color: #25a379;" text="Start" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" onMouseClicked="#Stop" style="-fx-background-color: #25a379;" text="Stop" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" onMouseClicked="#Next" style="-fx-background-color: #25a379;" text="Next" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" onMouseClicked="#Restart" style="-fx-background-color: #25a379;" text="Restart" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" onMouseClicked="#Lexicon" style="-fx-background-color: #25a379;" text="Lexicon" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+    <Button alignment="CENTER" minWidth="50.0" onMouseClicked="#Manage" style="-fx-background-color: #25a379;" text="Manage" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+
     <columnConstraints>
         <ColumnConstraints />
         <ColumnConstraints />
