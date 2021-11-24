@@ -60,15 +60,6 @@ public class Board {
 			String line = "|";
 			for (int j = 0; j < this.columns; j++) {
 				line += (this.board[i][j].isAlive()) ? "*" : ".";
-    			
-    			/*
-    			if (!this.board[j][i]) {
-    				line += ".";
-				}
-    			else {
-    				line += "*";
-				}
-				*/
 			}
 			line += "|";
 			System.out.println(line);
