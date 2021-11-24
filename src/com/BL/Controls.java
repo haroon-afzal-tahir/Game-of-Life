@@ -1,6 +1,7 @@
 package com.BL;
 
-private int zoomFactor;
+public class Controls {
+	private int zoomFactor;
 	private float speedFactor;
 	private int generations;
 	private boolean Play = true;
@@ -43,3 +44,4 @@ private int zoomFactor;
 	public boolean getplay() {
 		return this.Play;
 	}
+}
