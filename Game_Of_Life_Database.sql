@@ -40,17 +40,16 @@ ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
 
---drop table extras;
-CREATE TABLE Extras(
+--drop table Controls;
+CREATE TABLE Controls(
 	stateid	INT	FOREIGN KEY REFERENCES[state](stateID) NOT NULL,
-	score	INT,
-	[counter] INT,
+	[generations] INT,
 	speed FLOAT,
 	PRIMARY KEY(stateid)
 )
 go
 
-ALTER TABLE [dbo].[extras]  WITH CHECK ADD  CONSTRAINT [stateid] FOREIGN KEY(stateID)
+ALTER TABLE [dbo].[Controls]  WITH CHECK ADD  CONSTRAINT [stateid] FOREIGN KEY(stateID)
 REFERENCES [dbo].[state](stateid)
 ON UPDATE CASCADE
 ON DELETE CASCADE
@@ -63,8 +62,7 @@ CREATE PROCEDURE SaveBoard
 @gridColumns INT,
 @gridRows INT,
 @speed FLOAT,
-@counter INT,
-@score INT
+@generations INT
 --@flag int output
 AS
 BEGIN
@@ -86,10 +84,9 @@ BEGIN
 		)
 	END
 	BEGIN
-	INSERT INTO [dbo].Extras VALUES
+	INSERT INTO [dbo].Controls VALUES
 	(   @gameID,   -- stateid - int
-	    @score, -- score - int
-		@counter,
+		@generations,
 		@speed
 	)
 
@@ -104,8 +101,7 @@ CREATE PROCEDURE loadBoard
 @GCols INT OUTPUT,
 @GRows INT OUTPUT,
 @speed FLOAT OUTPUT,
-@counter INT OUTPUT,
-@score INT OUTPUT
+@generations INT OUTPUT
 
 AS
 BEGIN
@@ -121,11 +117,11 @@ BEGIN
 		 FROM dbo.board B
 		 WHERE B.sid = @gameid AND @GCols = B.columnsnum AND @GRows = B.rowsnum
 	END 
-	-----Loading speed,counter and score of game 
+	-----Loading speed,generations of game 
 	BEGIN
-	     SELECT @speed,@counter,@score
-		 FROM dbo.Extras E
-		 WHERE E.stateid=@gameid AND @speed=E.speed AND @score=E.score AND @counter=E.counter
+	     SELECT @speed,@generations
+		 FROM dbo.Controls E
+		 WHERE E.stateid=@gameid AND @speed=E.speed AND @generations=E.generations
         END
 END
 --------------------------------------------------------------------------------------------------
@@ -212,8 +208,7 @@ CREATE PROCEDURE viewBoard
 @gridCols INT OUTPUT,
 @gridRows INT OUTPUT,
 @speed FLOAT OUTPUT,
-@counter INT OUTPUT,
-@score INT OUTPUT
+@generations INT OUTPUT
 
 AS
 BEGIN
@@ -229,11 +224,11 @@ BEGIN
 		 FROM dbo.board B
 		 WHERE B.sid = @gameID AND @gridCols = B.columnsnum AND @gridRows = B.rowsnum
 	END 
-	-----view speed,counter and score of game 
+	-----view speed,generations of game 
 	BEGIN
-	     SELECT @speed,@counter,@score
-		 FROM dbo.Extras E
-		 WHERE E.stateid=@gameid AND @speed=E.speed AND @score=E.score AND @counter=E.counter
+	     SELECT @speed,@generations
+		 FROM dbo.Controls E
+		 WHERE E.stateid=@gameid AND @speed=E.speed AND @generations=E.generations
     END
 END
 --------------------------------------------------------------------------------------------
