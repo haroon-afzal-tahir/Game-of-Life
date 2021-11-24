@@ -2,8 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane alignment="BOTTOM_CENTER" hgap="20" vgap="20" xmlns="http://javafx.com/javafx/10.0.2-internal"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.UI.Controller">
+<GridPane xmlns:fx="http://javafx.com/fxml/1" alignment="BOTTOM_CENTER" hgap="20" vgap="20"
+          xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="com.UI.Controller">
     <columnConstraints>
         <ColumnConstraints/>
         <ColumnConstraints/>
@@ -18,8 +18,8 @@
         <RowConstraints/>
         <RowConstraints/>
     </rowConstraints>
-    <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Start"
-            GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    <Button alignment="CENTER" minWidth="50.0" onMouseClicked="#StartBtn" style="-fx-background-color: #25a379;"
+            text="Start" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
     <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Stop"
             GridPane.columnIndex="2" GridPane.rowIndex="1"/>
     <Button alignment="CENTER" minWidth="50.0" style="-fx-background-color: #25a379;" text="Next"

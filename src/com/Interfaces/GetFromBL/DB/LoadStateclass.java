@@ -2,6 +2,9 @@ package com.Interfaces.GetFromBL.DB;
 
 import com.BL.Game;
 
+import java.io.FileReader;
+import java.io.IOException;
+
 public class LoadStateclass implements LoadState {
 	@Override
 	public Game load(int gameID) {
@@ -9,7 +12,7 @@ public class LoadStateclass implements LoadState {
 		// TODO Auto-generated method stub
 		Game ret_gameobj = new Game();
 		int ch = 0;
-		var filename = "file"+ gameID + ".txt";
+		var filename = "file" + gameID + ".txt";
 		int generation = 0, counter = 0;
 		try {
 			FileReader fr = new FileReader(filename);
