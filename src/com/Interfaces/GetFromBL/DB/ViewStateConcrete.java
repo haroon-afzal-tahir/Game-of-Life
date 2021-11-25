@@ -1,5 +1,5 @@
 package com.Interfaces.GetFromBL.DB;
-
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ViewStateConcrete implements ViewState{
@@ -15,19 +15,25 @@ public class ViewStateConcrete implements ViewState{
 				System.out.println(list[i][j]);
 			}
 		}
-		
+		int index = -1;
 		//getting the name of the desired state
 		@SuppressWarnings("resource")
-		Scanner myObj = new Scanner(System.in);
-		System.out.println("\nPlease enter the name of the saved state you want to load: ");
-		Statename =  myObj.nextLine();
-		
-		int index = 0;
-		
-		for (int i = 0;i < size_list;i++) {
-			//if(Object.equals(list[i],Statename) == 0) {
-			//	index = i;
-			//}
+		Scanner myObj = new Scanner(System.in); 
+		while(index == -1) {
+			
+			System.out.println("\nPlease enter the name of the saved state you want to load/delete: ");
+			Statename =  myObj.nextLine();
+			
+			//searching for the index of name
+			//to see if the name is valid or not
+			for (int i = 0;i < size_list;i++) {
+					if(Objects.equals(list[i], Statename) == true) {
+						index = i;
+					}
+			}
+			if (index == -1) {
+					System.out.println("The name you've entered is not valid. Please try again\n");
+			}
 		}
 		
 		return Statename;
