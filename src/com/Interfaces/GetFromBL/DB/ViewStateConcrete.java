@@ -24,10 +24,11 @@ public class ViewStateConcrete implements ViewState{
 			System.out.println("\nPlease enter the name of the saved state you want to load/delete: ");
 			Statename =  myObj.nextLine();
 			
+			char[] ch = Statename.toCharArray();
 			//searching for the index of name
 			//to see if the name is valid or not
 			for (int i = 0;i < size_list;i++) {
-					if(Objects.equals(list[i], Statename) == true) {
+					if(Objects.equals(list[i], ch) == true) {
 						index = i;
 					}
 			}
