@@ -1,9 +1,23 @@
 package com.Interfaces.GetFromBL.DB;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class ViewStateConcrete implements ViewState{
+	private static int compare(char arr[], char arr2[]){
+		int a = 0, i = 0;
+		for (i = 0;i < arr.length;i++){
+			if(arr[i] == arr2[i]){
+				a++;
+			}
+		}
+		
+		if(a == arr.length){
+			return 1;
+		}
+		else {
+			return 0;
+		}
 
+	}
 	@Override
 	public String view(char[][] list,  int size_list) {
 		// TODO Auto-generated method stub
@@ -23,12 +37,11 @@ public class ViewStateConcrete implements ViewState{
 			
 			System.out.println("\nPlease enter the name of the saved state you want to load/delete: ");
 			Statename =  myObj.nextLine();
-			
 			char[] ch = Statename.toCharArray();
 			//searching for the index of name
 			//to see if the name is valid or not
 			for (int i = 0;i < size_list;i++) {
-					if(Objects.equals(list[i], ch) == true) {
+					if(compare(list[i], ch) == 1) {
 						index = i;
 					}
 			}
