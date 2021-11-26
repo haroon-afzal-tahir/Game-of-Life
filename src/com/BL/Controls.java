@@ -5,9 +5,9 @@ public class Controls {
 	private float speedFactor;
 	private int generations;
 	private boolean Play = true;
+	private int score;
 	
-	
-	public Controls(int zm, int sf, int g, boolean p){
+	public Controls(int zm, int sf, int g, boolean p) {
 		this.zoomFactor = zm;
 		this.generations = g;
 		this.Play = p;
@@ -43,5 +43,13 @@ public class Controls {
 	
 	public boolean getplay() {
 		return this.Play;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	public void setScore(int score) {
+		this.score = score;
 	}
 }
