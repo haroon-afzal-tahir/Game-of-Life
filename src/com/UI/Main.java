@@ -1,23 +1,20 @@
 //////////////////////////GUI Buttons///////////////////////////////////////////////
 package com.UI;
 
-import com.BL.Board;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Paint;
-import javafx.scene.transform.Affine;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    Scene scene1, scene2;
+    private int rows = 22, columns = 83;
+    private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
+    private GridPane gameGrid;
     
     public static void main(String[] args) {
         launch(args);
@@ -103,7 +100,24 @@ public class Main extends Application {
     
     public GridPane GetBoard() {
         GridPane gridPane = new GridPane();
-        
+    
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                grid_buttons[i][j] = new Grid_Button(i, j);
+            
+            
+                grid_buttons[i][j].setMaxHeight(1);
+                grid_buttons[i][j].setMaxWidth(1);
+                grid_buttons[i][j].setStyle("-fx-background-color: #ffffff");
+                grid_buttons[i][j].setStyle("-fx-border-width: 1.5");
+                grid_buttons[i][j].setStyle("-fx-border-color: #000000");
+            
+                gridPane.add(grid_buttons[i][j], j, i);
+            }
+        }
+    
+        return gridPane;
+        /*
         Canvas canvas = new Canvas(400, 400);
         GraphicsContext g = canvas.getGraphicsContext2D();
         
@@ -137,17 +151,19 @@ public class Main extends Application {
         
         gridPane.add(canvas, 0, 0);
         gridPane.setAlignment(Pos.CENTER);
-        return gridPane;
+        
+        */
     }
     
     public GridPane MergeGridPanes(GridPane BtnGrid, GridPane BoardGrid) {
         GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(20));
         
         RowConstraints Board = new RowConstraints();
-        Board.setPercentHeight(60);
+        Board.setPercentHeight(80);
         
         RowConstraints button = new RowConstraints();
-        button.setPercentHeight(40);
+        button.setPercentHeight(20);
         
         gridPane.getRowConstraints().addAll(Board, button);
         
@@ -163,15 +179,16 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Game Of Life");
-        
+    
         GridPane BtnGrid = GetButtons();
         GridPane BoardGrid = GetBoard();
-        
-        GridPane gameGrid = MergeGridPanes(BtnGrid, BoardGrid);
-        
+    
+        gameGrid = MergeGridPanes(BtnGrid, BoardGrid);
+    
         Scene scene = new Scene(gameGrid, 1, 1);
-        
+    
         primaryStage.setMaximized(true);
+        primaryStage.setFullScreen(true);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

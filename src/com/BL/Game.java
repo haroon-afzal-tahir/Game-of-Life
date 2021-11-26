@@ -4,6 +4,9 @@ public class Game {
         private Controls control;
         private Board board;
         
+        public Game() {
+        }
+        
         
         public Controls getcontrols() {
                 return control;
