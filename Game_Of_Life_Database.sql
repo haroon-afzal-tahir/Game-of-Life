@@ -1,16 +1,16 @@
-Create database GameOfLifedb
+Create database GameOfLife
 go
-use GameOfLifedb
+use GameOfLife
 go
 --drop table state;
 CREATE TABLE [state](
-	stateID INT PRIMARY KEY
+	StateName	VARCHAR(50)	PRIMARY KEY
 )
 GO
 
 --drop table cell;
 CREATE TABLE cell(
-	state_id	INT	FOREIGN KEY REFERENCES[state](stateID),
+	s_name	VARCHAR(50)	FOREIGN KEY REFERENCES[state](StateName),
 	rownum INT	NOT null,
 	columnNum INT	NOT null,
 	id INT IDENTITY(1,1), --changed
@@ -18,8 +18,8 @@ CREATE TABLE cell(
 )
 GO
 
-ALTER TABLE [dbo].[cell]  WITH CHECK ADD  CONSTRAINT [state_id] FOREIGN KEY(state_ID)
-REFERENCES [dbo].[state](stateid)
+ALTER TABLE [dbo].[cell]  WITH CHECK ADD  CONSTRAINT [s_name] FOREIGN KEY(s_name)
+REFERENCES [dbo].[state](StateName)
 ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
@@ -27,30 +27,30 @@ GO
 
 --drop table board;
 CREATE TABLE board(
-	[sid]	INT	FOREIGN KEY REFERENCES[state](stateID) NOT NULL,  --changed
+	[sname]	VARCHAR(50)	FOREIGN KEY REFERENCES[state](StateName) NOT NULL,  --changed
 	rowsnum INT		NOT NULL,
 	columnsnum INT	NOT NULL,
     PRIMARY KEY(rowsnum, columnsnum)
 )
 go
 
-ALTER TABLE [dbo].[board]  WITH CHECK ADD  CONSTRAINT [sid] FOREIGN KEY(sID)
-REFERENCES [dbo].[state](stateid)
+ALTER TABLE [dbo].[board]  WITH CHECK ADD  CONSTRAINT [sname] FOREIGN KEY(sname)
+REFERENCES [dbo].[state](StateName)
 ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
 
 --drop table Controls;
 CREATE TABLE Controls(
-	stateid	INT	FOREIGN KEY REFERENCES[state](stateID) NOT NULL,
+	S_Nam	VARCHAR(50)	FOREIGN KEY REFERENCES[state](StateName) NOT NULL,
 	[generations] INT,
 	speed FLOAT,
-	PRIMARY KEY(stateid)
+	PRIMARY KEY(S_Nam)
 )
 go
 
-ALTER TABLE [dbo].[Controls]  WITH CHECK ADD  CONSTRAINT [stateid] FOREIGN KEY(stateID)
-REFERENCES [dbo].[state](stateid)
+ALTER TABLE [dbo].[Controls]  WITH CHECK ADD  CONSTRAINT [S_Nam] FOREIGN KEY(S_Nam)
+REFERENCES [dbo].[state](StateName)
 ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
@@ -58,7 +58,7 @@ GO
 --drop procedure SaveBoard;
 
 CREATE PROCEDURE SaveBoard
-@gameID INT,
+@State_Name VARCHAR(50),
 @gridColumns INT,
 @gridRows INT,
 @speed FLOAT,
@@ -68,24 +68,24 @@ AS
 BEGIN
 	--saving the game id initially
 	BEGIN
-		INSERT INTO [dbo].[state](stateID) VALUES (@gameID)
+		INSERT INTO [dbo].[state](StateName) VALUES ( @State_Name )
 	END
 	BEGIN
 		INSERT INTO [dbo].board
 		(
-		    [sid],
+		    sname,
 		    rowsnum,
 		    columnsnum
 		)
 		VALUES
-		(   @gameID, -- sid - int
+		(   @State_Name , -- sid - int
 		    @gridRows,    -- rowsnum - int
 		    @gridColumns     -- columnsnum - int
 		)
 	END
 	BEGIN
 	INSERT INTO [dbo].Controls VALUES
-	(   @gameID,   -- stateid - int
+	(   @State_Name ,   -- stateid - int
 		@generations,
 		@speed
 	)
@@ -97,7 +97,7 @@ GO
 ---Drop Procedure Load Board;
 
 CREATE PROCEDURE loadBoard
-@gameID INT,
+@State_Name VARCHAR(50) ,
 @GCols INT OUTPUT,
 @GRows INT OUTPUT,
 @speed FLOAT OUTPUT,
@@ -107,28 +107,28 @@ AS
 BEGIN
      ----Check if state_id exists or not, which is going to be loaded
 	 IF EXISTS(
-	    SELECT @gameid
+	    SELECT  @State_Name 
 		FROM dbo.[state] S			
-		WHERE S.stateID = @gameid
+		WHERE S.StateName =  @State_Name 
 	)
 	-------Loading rows and columns of board
 	BEGIN
 	     SELECT @GRows, @GCols
 		 FROM dbo.board B
-		 WHERE B.sid = @gameid AND @GCols = B.columnsnum AND @GRows = B.rowsnum
+		 WHERE B.sname =  @State_Name  AND @GCols = B.columnsnum AND @GRows = B.rowsnum
 	END 
 	-----Loading speed,generations of game 
 	BEGIN
 	     SELECT @speed,@generations
 		 FROM dbo.Controls E
-		 WHERE E.stateid=@gameid AND @speed=E.speed AND @generations=E.generations
+		 WHERE E.S_Nam = @State_Name  AND @speed=E.speed AND @generations=E.generations
         END
 END
 --------------------------------------------------------------------------------------------------
 ----Drop Procedure Save Cell;
 
 CREATE PROCEDURE saveCell
-@gameID INT,
+@State_Name VARCHAR(50),
 @rowNum INT,
 @colNum INT
 
@@ -138,12 +138,12 @@ BEGIN
       BEGIN
 	       INSERT INTO [dbo].cell
 		(
-		    [state_id],
+		    s_name,
 		    rownum,
 		    columnNum
 		)
 		VALUES
-		(   @gameID, -- state_id - int
+		(   @State_Name , -- state_id - int
 		    @rowNum,    -- rownum - int
 		    @colNum    -- columnNum - int
 		)
@@ -157,7 +157,7 @@ END
 --drop procedure LoadCells;
 
 CREATE PROCEDURE LoadCells
-@gameid INT,
+@State_Name VARCHAR(50),
 @rownum INT OUTPUT,
 @columnnum INT OUTPUT
 --@flag int output
@@ -165,14 +165,14 @@ AS
 BEGIN
 	--checking if the state exists or not which is going to be loaded
 	IF EXISTS ( 
-		SELECT @gameid
+		SELECT  @State_Name 
 		FROM dbo.[state] S			
-		WHERE S.stateID = @gameid
+		WHERE S.StateName =  @State_Name 
 	)	
 	BEGIN
 		SELECT @rownum, @columnnum
 		FROM dbo.cell C
-		WHERE C.state_id = @gameid AND @columnnum = C.columnNum AND @rownum = C.rownum
+		WHERE C.s_name =  @State_Name  AND @columnnum = C.columnNum AND @rownum = C.rownum
 	END 
 END
 
@@ -181,7 +181,7 @@ END
 ---- Drop Procedure to view Cell;
 
 CREATE PROCEDURE viewCell
-@gameId INT,
+ @State_Name VARCHAR(50) ,
 @rowNums INT OUTPUT,
 @colsNums INT OUTPUT
 
@@ -189,14 +189,14 @@ AS
 BEGIN
       --checking if the state exists or not which is going to be viewed
 	IF EXISTS ( 
-		SELECT @gameId
+		SELECT  @State_Name 
 		FROM dbo.[state] S			
-		WHERE S.stateID = @gameId
+		WHERE S.StateName =  @State_Name 
 	)	
 	BEGIN
 		SELECT @rowNums, @colsNums
 		FROM dbo.cell C
-		WHERE C.state_id = @gameid AND @colsNums = C.columnNum AND @rowNums = C.rownum
+		WHERE C.s_name =  @State_Name  AND @colsNums = C.columnNum AND @rowNums = C.rownum
 	END 
 END
 
@@ -204,7 +204,7 @@ END
 
 -----Drop Procedure View Board;
 CREATE PROCEDURE viewBoard
-@gameID INT,
+@State_Name VARCHAR(50),
 @gridCols INT OUTPUT,
 @gridRows INT OUTPUT,
 @speed FLOAT OUTPUT,
@@ -214,41 +214,41 @@ AS
 BEGIN
      ----Check if state_id exists or not, which is going to be viewed
 	 IF EXISTS(
-	    SELECT @gameID
+	    SELECT  @State_Name 
 		FROM dbo.[state] S			
-		WHERE S.stateID = @gameID
+		WHERE S.StateName =  @State_Name 
 	)
 	-------view rows and columns of board
 	BEGIN
 	     SELECT @gridRows, @gridCols
 		 FROM dbo.board B
-		 WHERE B.sid = @gameID AND @gridCols = B.columnsnum AND @gridRows = B.rowsnum
+		 WHERE B.sname =  @State_Name  AND @gridCols = B.columnsnum AND @gridRows = B.rowsnum
 	END 
 	-----view speed,generations of game 
 	BEGIN
-	     SELECT @speed,@generations
+	     SELECT @speed, @generations
 		 FROM dbo.Controls E
-		 WHERE E.stateid=@gameid AND @speed=E.speed AND @generations=E.generations
+		 WHERE E.S_Nam = @State_Name  AND @speed=E.speed AND @generations = E.generations
     END
 END
 --------------------------------------------------------------------------------------------
 
 --drop procedure delete_state;
 CREATE PROCEDURE delete_state
-@gameid INT,
+@State_Name VARCHAR(50),
 @flag int output
 AS
 BEGIN
 	
 	--checking if the game id exists or not
 	IF EXISTS ( 
-		SELECT @gameid
+		SELECT  @State_Name 
 		FROM dbo.[state] S			
-		WHERE S.stateID = @gameid
+		WHERE S.StateName =  @State_Name 
 	)	
 	BEGIN 
 	DELETE FROM dbo.state 
-	WHERE stateID = @gameid
+	WHERE StateName =  @State_Name 
 	SET @flag = 1
 	END 
 	ELSE
