@@ -104,14 +104,11 @@ public class Main extends Application {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 grid_buttons[i][j] = new Grid_Button(i, j);
-            
-            
-                grid_buttons[i][j].setMaxHeight(1);
-                grid_buttons[i][j].setMaxWidth(1);
+    
                 grid_buttons[i][j].setStyle("-fx-background-color: #ffffff");
                 grid_buttons[i][j].setStyle("-fx-border-width: 1.5");
                 grid_buttons[i][j].setStyle("-fx-border-color: #000000");
-            
+    
                 gridPane.add(grid_buttons[i][j], j, i);
             }
         }
