@@ -3,6 +3,8 @@ package com.Main;
 import Colors.Color;
 import com.BL.Board;
 import com.BL.Controls;
+import com.BL.Game;
+import com.Interfaces.GetFromBL.DB.DB_TXT;
 
 
 import java.util.Scanner;
@@ -36,7 +38,33 @@ public class Main {
 	
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
-		
+		Game game_obj=new Game(8,5);
+		DB_TXT Db_object=new DB_TXT();
 
+		game_obj.attachDB(Db_object);
+
+		game_obj.setCell(0,0);
+		game_obj.setCell(0,1);
+		game_obj.setCell(2,2);
+		game_obj.setCell(3,2);
+		game_obj.setCell(4,2);
+
+		game_obj.printboard();
+		game_obj.save();
+		game_obj.step();
+
+		game_obj.printboard();
+		game_obj.save();
+		game_obj.step();
+
+		game_obj.printboard();
+		game_obj.save();
+		game_obj.step();
+
+		game_obj.view();
+		Scanner inpu=new Scanner(System.in);
+		String statename=inpu.next();
+		game_obj.load(statename);
+		game_obj.printboard();
 	}
 }
