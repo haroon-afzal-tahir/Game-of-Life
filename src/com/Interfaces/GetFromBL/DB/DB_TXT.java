@@ -19,7 +19,7 @@ public class DB_TXT implements DB_I {
         File myFile = new File(dir,filename);
 
         if (myFile.delete()){
-            System.out.println(myFile.getName() + "has been deleted.\n" );
+            System.out.println(myFile.getName() + " has been deleted.\n" );
         }
         else {
             System.out.println("\nSome problem occurred while deleting the file\n");
