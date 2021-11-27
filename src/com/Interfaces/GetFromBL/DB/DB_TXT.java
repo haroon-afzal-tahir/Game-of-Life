@@ -13,8 +13,10 @@ public class DB_TXT implements DB_I {
     public void delete(String StateName)
     {
         // TODO Auto-generated method stub
+        String filePath = new File("").getAbsolutePath();
+        File dir = new File(filePath+"/files");
         String filename = StateName + ".txt";
-        File myFile = new File(filename);
+        File myFile = new File(dir,filename);
 
         if (myFile.delete()){
             System.out.println(myFile.getName() + "has been deleted.\n" );
