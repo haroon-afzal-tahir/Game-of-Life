@@ -3,7 +3,7 @@ package com.Main;
 import Colors.Color;
 import com.BL.Board;
 import com.BL.Controls;
-import com.FactoryImplementation.BL_Implementation;
+import com.BL.Game;
 
 import java.util.Scanner;
 
@@ -38,7 +38,7 @@ public class Main {
 		Scanner input = new Scanner(System.in);
 		
 		int rows = 20, cols = 75;
-		BL_Implementation obj = new BL_Implementation(rows, cols);
+		Game obj = new Game(rows, cols);
 		
 		Board board = obj.getBoard();
 		Controls controls = obj.getControl();

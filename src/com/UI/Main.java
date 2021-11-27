@@ -1,7 +1,7 @@
 //////////////////////////GUI Buttons///////////////////////////////////////////////
 package com.UI;
 
-import com.BL.Board;
+import com.BL.Game;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -21,60 +22,41 @@ public class Main extends Application {
     private int rows = 20, columns = 75;
     private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
     private GridPane gameGrid;
-    private Board board = new Board(rows, columns);
-    
+    Button start = new Button("Start");
+    Button stop = new Button("Stop");
+    Button next = new Button("Next");
+    Button restart = new Button("Restart");
+    Button lexicon = new Button("Lexicon");
+    Button manage = new Button("Manage");
+    Slider Zoom = new Slider(1, 10, 0.5);
+    Slider Speed = new Slider(1, 10, 0.5);
+    private Game game = new Game(rows, columns);
     
     public static void main(String[] args) {
         launch(args);
     }
     
     public GridPane GetButtons() {
-        // Button Declaration
-        Button start = new Button("Start");
-        Button stop = new Button("Stop");
-        Button next = new Button("Next");
-        Button restart = new Button("Restart");
-        Button lexicon = new Button("Lexicon");
-        Button manage = new Button("Manage");
+        Zoom.setShowTickMarks(true);
+        Zoom.setShowTickLabels(true);
+        Zoom.setMajorTickUnit(0.25f);
+        Zoom.setBlockIncrement(0.1f);
         
-        Slider slider1 = new Slider(1, 2, 0.5);
+        Speed.setShowTickMarks(true);
+        Speed.setShowTickLabels(true);
+        Speed.setMajorTickUnit(0.25f);
+        Speed.setBlockIncrement(0.1f);
         
-        // enable the marks
-        slider1.setShowTickMarks(true);
+        game.getControl().setZoomFactor(0);
+        game.getControl().setSpeedFactor(0);
         
-        // enable the Labels
-        slider1.setShowTickLabels(true);
         
-        // set Major tick unit
-        slider1.setMajorTickUnit(0.25f);
-        
-        // sets the value of the property
-        // blockIncrement
-        slider1.setBlockIncrement(0.1f);
-        
-        Slider slider2 = new Slider(1, 2, 0.5);
-        
-        // enable the marks
-        slider2.setShowTickMarks(true);
-        
-        // enable the Labels
-        slider2.setShowTickLabels(true);
-        
-        // set Major tick unit
-        slider2.setMajorTickUnit(0.25f);
-        
-        // sets the value of the property
-        // blockIncrement
-        slider2.setBlockIncrement(0.1f);
-        
-        // Button Set Width
         start.setMinWidth(100);
         stop.setMinWidth(100);
         next.setMinWidth(100);
         restart.setMinWidth(100);
         lexicon.setMinWidth(100);
         manage.setMinWidth(100);
-        
         
         start.getStyleClass().removeAll();
         start.getStyleClass().add("SimpleButton");
@@ -104,8 +86,10 @@ public class Main extends Application {
         gridPane.add(restart, 3, 0);
         gridPane.add(lexicon, 4, 0);
         gridPane.add(manage, 5, 0);
-        gridPane.add(slider1, 1, 1, 2, 1);
-        gridPane.add(slider2, 3, 1, 2, 1);
+        gridPane.add(new ImageView("com/Images/zoom.png"), 0, 1, 2, 1);
+        gridPane.add(Zoom, 1, 1, 2, 1);
+        gridPane.add(new ImageView("com/Images/speed.png"), 3, 1, 2, 1);
+        gridPane.add(Speed, 4, 1, 2, 1);
         
         // Setting Horizontal Gap Between Buttons
         gridPane.setHgap(20);
@@ -130,18 +114,44 @@ public class Main extends Application {
                 grid_buttons[i][j].setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-                        if (board.getCell(finalI, finalJ).isAlive() == false) {
+                        if (game.getBoard().getCell(finalI, finalJ).isAlive() == false) {
                             grid_buttons[finalI][finalJ].getStyleClass().removeAll("UnselectedButton");
                             grid_buttons[finalI][finalJ].getStyleClass().add("SelectedButton");
-                            board.setAlive(finalI, finalJ);
+                            game.getBoard().setAlive(finalI, finalJ);
                         } else {
                             grid_buttons[finalI][finalJ].getStyleClass().removeAll("SelectedButton");
                             grid_buttons[finalI][finalJ].getStyleClass().add("UnselectedButton");
-                            board.setDead(finalI, finalJ);
+                            game.getBoard().setDead(finalI, finalJ);
                         }
                     }
                 });
     
+                Speed.setValue(game.getControl().getSpeedFactor());
+                Zoom.setValue(game.getControl().getZoomfactor());
+    
+                Speed.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        game.getControl().setSpeedFactor((float) Speed.getValue());
+                    }
+                });
+    
+                Zoom.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        double prev = game.getControl().getZoomfactor(), next = Zoom.getValue();
+            
+                        if (prev == 1.0f && next == 1.0f) {
+                            gridPane.setScaleX(1.0f);
+                            gridPane.setScaleY(1.0f);
+                        } else {
+                            gridPane.setScaleX(gridPane.getScaleX() + (next - prev));
+                            gridPane.setScaleY(gridPane.getScaleY() + (next - prev));
+                        }
+                        game.getControl().setZoomFactor((float) next);
+            
+                    }
+                });
                 gridPane.add(grid_buttons[i][j], j, i);
             }
         }

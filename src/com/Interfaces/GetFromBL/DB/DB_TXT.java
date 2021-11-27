@@ -1,45 +1,35 @@
 package com.Interfaces.GetFromBL.DB;
 
-import com.BL.Cell;
 import com.BL.Game;
 import com.Interfaces.DB_I;
 
-import javax.lang.model.type.NullType;
 import java.io.*;
-import java.util.Scanner;
 
 public class DB_TXT implements DB_I {
 
-    public void delete(String StateName)
-    {
+    public void delete(String StateName) {
         // TODO Auto-generated method stub
         String filename = StateName + ".txt";
         File myFile = new File(filename);
-
-        if (myFile.delete()){
-            System.out.println(myFile.getName() + "has been deleted.\n" );
-        }
-        else {
+    
+        if (myFile.delete()) {
+            System.out.println(myFile.getName() + "has been deleted.\n");
+        } else {
             System.out.println("\nSome problem occurred while deleting the file\n");
         }
 
     }
-
-    public void save( Game obj)
-    {
-
+    
+    public void save(Game obj) {
+        
         String filePath = new File("").getAbsolutePath();
-        File dir = new File(filePath+"/files");
-
-        File[] matches = dir.listFiles(new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                return  name.endsWith(".txt");
+        File dir = new File(filePath + "/files");
+        
+        File[] matches = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".txt");
             }
         }); //checking the number of files in the folder
-
-
         int length;
         if (matches!=null) {
             length= matches.length;
@@ -66,30 +56,30 @@ public class DB_TXT implements DB_I {
             File filer;
 
 
-            //writing cell of the board in file
-            //Board obj1 = obj.getBoard();
-            int row = obj.getBoard().getRows();
-            int col = obj.getBoard().getColumns();
-            wFile.write(row + "\n");
-            wFile.write(col + "\n");
-            wFile.write(obj.getgenerations() + "\n");
-            for (int i = 0; i < row; i++) {
-                for (int j = 0; j < col; j++) {
-                    if (obj.isAlive(i,j) == true) {
-                        wFile.write(obj.getBoard().getCell(i, j).getX() + "\n");
-                        wFile.write(obj.getBoard().getCell(i, j).getY() + "\n");
-
+                //writing cell of the board in file
+                //Board obj1 = obj.getBoard();
+                int row = obj.getBoard().getRows();
+                int col = obj.getBoard().getColumns();
+                wFile.write(row + "\n");
+                wFile.write(col + "\n");
+                wFile.write(obj.getgenerations() + "\n");
+                for (int i = 0; i < row; i++) {
+                    for (int j = 0; j < col; j++) {
+                        if (obj.getBoard().getCell(i, j).isAlive() == true) {
+                            wFile.write(obj.getBoard().getCell(i, j).getX() + "\n");
+                            wFile.write(obj.getBoard().getCell(i, j).getY() + "\n");
+                            wFile.write(true + "\n");
+                        }
                     }
                 }
-            }
-            wFile.write("-1\n-1");
-            //for(int cols=1;cols<=col;cols++)
-            //{
-            //wFile.write(Game.obj[rows][cols]);
-            //wFile.write(obj.getBoard().setCell(rows, cols));
-            //wFile.write(obj.Board[rows][cols].setY(cols));
-            //wFile.write(obj.Board[rows][cols].isAlive(true));
-            //condition to check if cell is alive then save it in the file
+
+                //for(int cols=1;cols<=col;cols++)
+                //{
+                //wFile.write(Game.obj[rows][cols]);
+                //wFile.write(obj.getBoard().setCell(rows, cols));
+                //wFile.write(obj.Board[rows][cols].setY(cols));
+                //wFile.write(obj.Board[rows][cols].isAlive(true));
+                //condition to check if cell is alive then save it in the file
                     /*if(obj.Board[rows][cols].isAlice(true)
                     {
                         wFile.write( obj.Board[rows][cols].setX(rows));
@@ -97,7 +87,7 @@ public class DB_TXT implements DB_I {
 
 
                     }*/
-            //}
+                //}
 
             wFile.close();
             System.out.println("Successfully wrote to the file.");
@@ -124,40 +114,21 @@ public class DB_TXT implements DB_I {
 
 
     }
-
-    public String view()
+    
+    /*public Cell[][] view()
     {
+Cell[][] obj=new Cell[][];
 
-        String StateNames=new String();
-        String filePath = new File("").getAbsolutePath();
-        File dir = new File(filePath+"/files");
-
-        File[] matches = dir.listFiles(new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                return  name.endsWith(".txt");
-            }
-        }); //checking the number of files in the folder
-        for(int i=0;i<matches.length;i++) {
-
-            StateNames=StateNames.concat(matches[i].getName() + "\n");
-        }
-
-        return StateNames;
-    }
-
-    public Game load(String stateName)
-    {
-
-        String filePath = new File("").getAbsolutePath();
-        File dir = new File(filePath+"/files");
-        Game ret_gameobj=null;
+return obj;
+    }*/
+    public Game load(String stateName) {
+        
+        Game ret_gameobj = new Game();
         String filename = stateName + ".txt";
         String line;
         int x = 0, y = 0;
         try {
-            FileReader fr = new FileReader(new File(dir,filename));
+            FileReader fr = new FileReader(filename);
             BufferedReader bufferedReader = new BufferedReader(fr);
             // read from FileReader
             //read total rows of the grid
@@ -165,15 +136,15 @@ public class DB_TXT implements DB_I {
             int rows = Integer.parseInt(line);
             //System.out.println(rows);
 
-
+            ret_gameobj.getBoard().setRows(rows);
 
             //total columns of the grid
             line = bufferedReader.readLine();
             int columns = Integer.parseInt(line);
             //System.out.println(columns);
 
+            ret_gameobj.getBoard().setColumns(columns);
 
-            ret_gameobj=new Game(rows,columns);
             //generations
             line = bufferedReader.readLine();
             int generations = Integer.parseInt(line);
@@ -182,24 +153,25 @@ public class DB_TXT implements DB_I {
             ret_gameobj.setgenerations(generations);
 
             //speed
-
+            line = bufferedReader.readLine();
+            float speed = Float.parseFloat(line);
             //System.out.println(speed);
 
-            ret_gameobj.getcontrols().setspeedfactor(1);
+            ret_gameobj.getControl().setSpeedFactor(speed);
 
             //read the indexes of the alive cells
             while (x != -1 && y !=-1) {
                 //row number of a cell
                 line = bufferedReader.readLine();
                 x = Integer.parseInt(line);
-                System.out.println(x);
+                //System.out.println(x);
 
                 //column number of a cell
                 line = bufferedReader.readLine();
                 y = Integer.parseInt(line);
-                System.out.println(y);
-                if(x!=-1 && y!=-1)
-                    ret_gameobj.getBoard().setCell(x, y);
+                //System.out.println(y);
+
+                ret_gameobj.getBoard().setCell(x, y);
             }
 
             // close the file
@@ -207,8 +179,6 @@ public class DB_TXT implements DB_I {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return ret_gameobj;
-
     }
 }

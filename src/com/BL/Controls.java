@@ -1,39 +1,44 @@
 package com.BL;
 
 public class Controls {
-	private int zoomFactor;
+	private float zoomFactor;
 	private float speedFactor;
-
+	private int generations;
 	private boolean Play = true;
 	private int score;
 	
-	public Controls(int zm, int sf, boolean p) {
+	public Controls(float zm, float sf, int g, boolean p) {
 		this.zoomFactor = zm;
-
+		this.generations = g;
 		this.Play = p;
 		this.speedFactor = sf;
 	}
 	
-	public void setspeedfactor(float sf) {
-		this.speedFactor = sf;
-	}
-	
-
-	
-	public void setzoomfactor(int zm) {
+	public void setZoomFactor(float zm) {
 		this.zoomFactor = zm;
 	}
 	
-	public void setplay(boolean play) {
-		this.Play= play;
-	}
-	public float getspeedfactor() {
-		return this.speedFactor;
+	public void setPlay(boolean play) {
+		this.Play = play;
 	}
 	
-
+	public float getSpeedFactor() {
+		return this.speedFactor * 1000;
+	}
 	
-	public int getzoomfactor() {
+	public void setSpeedFactor(float sf) {
+		this.speedFactor = sf;
+	}
+	
+	public int getGenerations() {
+		return this.generations;
+	}
+	
+	public void setGenerations(int g) {
+		this.generations = g;
+	}
+	
+	public float getZoomfactor() {
 		return this.zoomFactor;
 	}
 	
