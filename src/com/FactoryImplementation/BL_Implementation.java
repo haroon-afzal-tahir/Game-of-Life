@@ -10,8 +10,14 @@ public class BL_Implementation implements BL_Interface {
 	
 	public BL_Implementation(int rows, int cols) {
 		board = new Board(rows, cols);
-		controls = new Controls(100, 100, 0, true);
+		controls = new Controls(100, 1, 0, true);
 	}
+	
+	public void updateBoard() throws InterruptedException {
+		this.board.step();
+		Thread.sleep((long) this.controls.getSpeedFactor());
+	}
+	
 	
 	@Override
 	public Board getBoard() {

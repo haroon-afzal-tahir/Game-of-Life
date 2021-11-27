@@ -30,11 +30,11 @@ public class Game {
         }
         
         public void setspeedfactor(float sf) {
-                this.control.setspeedfactor(sf);
+                this.control.setSpeedFactor(sf);
         }
         
         public float getspeedfactor() {
-                return this.control.getspeedfactor();
+            return this.control.getSpeedFactor();
         }
     
     public int getgenerations() {

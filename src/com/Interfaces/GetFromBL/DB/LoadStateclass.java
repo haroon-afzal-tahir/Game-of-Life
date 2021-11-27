@@ -28,34 +28,34 @@ public class LoadStateclass implements LoadState {
 							
 				//total columns of the grid 
 				line = bufferedReader.readLine();
-				int columns = Integer.parseInt(line);
-				//System.out.println(columns);
-				
-				ret_gameobj.getBoard().setColumns(columns);
-				
-				//generations
+			int columns = Integer.parseInt(line);
+			//System.out.println(columns);
+			
+			ret_gameobj.getBoard().setColumns(columns);
+			
+			//generations
+			line = bufferedReader.readLine();
+			int generations = Integer.parseInt(line);
+			//System.out.println(generations);
+			
+			ret_gameobj.getcontrols().setGenerations(generations);
+			
+			//speed
+			line = bufferedReader.readLine();
+			float speed = Float.parseFloat(line);
+			//System.out.println(speed);
+			
+			ret_gameobj.getcontrols().setSpeedFactor(speed);
+			
+			//read the indexes of the alive cells
+			while (x != -1 && y != -1) {
+				//row number of a cell
 				line = bufferedReader.readLine();
-				int generations = Integer.parseInt(line);
-				//System.out.println(generations);
+				x = Integer.parseInt(line);
+				//System.out.println(x);
 				
-				ret_gameobj.getcontrols().setgenerations(generations);
-				
-				//speed
+				//column number of a cell
 				line = bufferedReader.readLine();
-				float speed = Float.parseFloat(line);
-				//System.out.println(speed);
-				
-				ret_gameobj.getcontrols().setspeedfactor(speed);
-				
-				//read the indexes of the alive cells
-				while (x != -1 && y !=-1) {
-					//row number of a cell
-					line = bufferedReader.readLine();
-					x = Integer.parseInt(line);
-					//System.out.println(x);
-					
-					//column number of a cell
-					line = bufferedReader.readLine();
 					y = Integer.parseInt(line);
 					//System.out.println(y);
 					

@@ -157,7 +157,7 @@ return obj;
             float speed = Float.parseFloat(line);
             //System.out.println(speed);
 
-            ret_gameobj.getcontrols().setspeedfactor(speed);
+            ret_gameobj.getcontrols().setSpeedFactor(speed);
 
             //read the indexes of the alive cells
             while (x != -1 && y !=-1) {
