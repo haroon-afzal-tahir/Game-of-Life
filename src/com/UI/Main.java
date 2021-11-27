@@ -21,15 +21,16 @@ public class Main extends Application {
     
     private int rows = 20, columns = 75;
     private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
-    private GridPane gameGrid;
+    
     Button start = new Button("Start");
     Button stop = new Button("Stop");
     Button next = new Button("Next");
-    Button restart = new Button("Restart");
+    Button reset = new Button("Reset");
     Button lexicon = new Button("Lexicon");
     Button manage = new Button("Manage");
-    Slider Zoom = new Slider(1, 10, 0.5);
-    Slider Speed = new Slider(1, 10, 0.5);
+    Slider Zoom = new Slider(0, 10, 0.5);
+    Slider Speed = new Slider(0, 10, 0.5);
+    
     private Game game = new Game(rows, columns);
     
     public static void main(String[] args) {
@@ -54,7 +55,7 @@ public class Main extends Application {
         start.setMinWidth(100);
         stop.setMinWidth(100);
         next.setMinWidth(100);
-        restart.setMinWidth(100);
+        reset.setMinWidth(100);
         lexicon.setMinWidth(100);
         manage.setMinWidth(100);
         
@@ -67,8 +68,8 @@ public class Main extends Application {
         next.getStyleClass().removeAll();
         next.getStyleClass().add("SimpleButton");
         
-        restart.getStyleClass().removeAll();
-        restart.getStyleClass().add("SimpleButton");
+        reset.getStyleClass().removeAll();
+        reset.getStyleClass().add("SimpleButton");
         
         lexicon.getStyleClass().removeAll();
         lexicon.getStyleClass().add("SimpleButton");
@@ -83,7 +84,7 @@ public class Main extends Application {
         gridPane.add(start, 0, 0);
         gridPane.add(stop, 1, 0);
         gridPane.add(next, 2, 0);
-        gridPane.add(restart, 3, 0);
+        gridPane.add(reset, 3, 0);
         gridPane.add(lexicon, 4, 0);
         gridPane.add(manage, 5, 0);
         gridPane.add(new ImageView("com/Images/zoom.png"), 0, 1, 2, 1);
@@ -126,35 +127,63 @@ public class Main extends Application {
                     }
                 });
     
-                Speed.setValue(game.getControl().getSpeedFactor());
-                Zoom.setValue(game.getControl().getZoomfactor());
-    
-                Speed.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                next.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        game.getControl().setSpeedFactor((float) Speed.getValue());
-                    }
-                });
-    
-                Zoom.setOnMouseDragged(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        double prev = game.getControl().getZoomfactor(), next = Zoom.getValue();
-            
-                        if (prev == 1.0f && next == 1.0f) {
-                            gridPane.setScaleX(1.0f);
-                            gridPane.setScaleY(1.0f);
-                        } else {
-                            gridPane.setScaleX(gridPane.getScaleX() + (next - prev));
-                            gridPane.setScaleY(gridPane.getScaleY() + (next - prev));
+                        game.getBoard().step();
+                        for (int i = 0; i < rows; i++) {
+                            for (int j = 0; j < columns; j++) {
+                                if (!game.getBoard().getCell(i, j).isAlive()) {
+                                    grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
+                                    grid_buttons[i][j].getStyleClass().add("UnselectedButton");
+                                } else {
+                                    grid_buttons[i][j].getStyleClass().removeAll("UnselectedButton");
+                                    grid_buttons[i][j].getStyleClass().add("SelectedButton");
+                                }
+                            }
                         }
-                        game.getControl().setZoomFactor((float) next);
-            
                     }
                 });
+    
+                reset.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        for (int i = 0; i < rows; i++) {
+                            for (int j = 0; j < columns; j++) {
+                                grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
+                                grid_buttons[i][j].getStyleClass().add("UnselectedButton");
+                                game.getBoard().setDead(i, j);
+                            }
+                        }
+                    }
+                });
+    
                 gridPane.add(grid_buttons[i][j], j, i);
             }
         }
+        /*
+     
+     
+         */
+        Speed.setValue(game.getControl().getSpeedFactor());
+        Zoom.setValue(game.getControl().getZoomfactor());
+    
+        Speed.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                game.getControl().setSpeedFactor((float) Speed.getValue());
+            }
+        });
+    
+        Zoom.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                double prev = game.getControl().getZoomfactor(), next = Zoom.getValue();
+                gridPane.setScaleX(gridPane.getScaleX() + (next - prev));
+                gridPane.setScaleY(gridPane.getScaleY() + (next - prev));
+                game.getControl().setZoomFactor((float) next);
+            }
+        });
     
         return gridPane;
     }
@@ -186,7 +215,7 @@ public class Main extends Application {
         GridPane BtnGrid = GetButtons();
         GridPane BoardGrid = GetBoard();
     
-        gameGrid = MergeGridPanes(BtnGrid, BoardGrid);
+        GridPane gameGrid = MergeGridPanes(BtnGrid, BoardGrid);
     
         Scene scene = new Scene(gameGrid, 1, 1);
     
