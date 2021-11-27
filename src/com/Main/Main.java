@@ -3,7 +3,7 @@ package com.Main;
 import Colors.Color;
 import com.BL.Board;
 import com.BL.Controls;
-import com.BL.Game;
+
 
 import java.util.Scanner;
 
@@ -37,30 +37,6 @@ public class Main {
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
 		
-		int rows = 20, cols = 75;
-		Game obj = new Game(rows, cols);
-		
-		Board board = obj.getBoard();
-		Controls controls = obj.getControl();
-		
-		int choice = 1;
-		while (choice >= 1 && choice <= 4) {
-			printCommand();
-			choice = input.nextInt();
-			switch (choice) {
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-					break;
-				case 4:
-					break;
-				default:
-					break;
-			}
-			obj.setBoard(board);
-			obj.setControl(controls);
-		}
+
 	}
 }
