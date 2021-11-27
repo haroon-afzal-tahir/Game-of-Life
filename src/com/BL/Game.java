@@ -3,39 +3,55 @@ package com.BL;
 import com.Interfaces.DB_I;
 
 public class Game {
-        private Controls control;
-        private Board board;
-        private DB_I DB_Listener;
-        private int generations;
-
-
-       public Game() {
-       }
+    private Board board;
+    private Controls controls;
+    private DB_I DB_Listener;
+    private int generations;
     
+    public Game(int rows, int cols) {
+        board = new Board(rows, cols);
+        controls = new Controls(100, 1, 0, true);
+    }
+    
+    public Game() {
+    }
+    
+    public void updateBoard() throws InterruptedException {
+        this.board.step();
+        Thread.sleep((long) this.controls.getSpeedFactor());
+    }
+    
+    public Board getBoard() {
+        return board;
+    }
+    
+    public void setBoard(Board obj) {
+        board = obj;
+    }
+    
+    public Controls getControl() {
+        return controls;
+    }
+    
+    public void setControl(Controls obj) {
+        controls = obj;
+    }
     
     public void attachDB(DB_I list) {
         this.DB_Listener = list;
     }
-        
-        public Controls getcontrols() {
-                return control;
-        }
-        
-        public Board getBoard() {
-                return board;
-        }
-        
-        public int getScore() {
-                return control.getScore();
-        }
-        
-        public void setspeedfactor(float sf) {
-                this.control.setSpeedFactor(sf);
-        }
-        
-        public float getspeedfactor() {
-            return this.control.getSpeedFactor();
-        }
+    
+    public int getScore() {
+        return controls.getScore();
+    }
+    
+    public void setspeedfactor(float sf) {
+        this.controls.setSpeedFactor(sf);
+    }
+    
+    public float getspeedfactor() {
+        return this.controls.getSpeedFactor();
+    }
     
     public int getgenerations() {
         return generations;
@@ -44,18 +60,18 @@ public class Game {
     public void setgenerations(int gen) {
         generations = gen;
     }
-        
-        public void setCell(int i, int j) {
-                this.board.setCell(i, j);
-        }
-        
-        public int getRows() {
-                return this.board.getRows();
-        }
-        
-        public int getCols() {
-                return this.board.getColumns();
-        }
+    
+    public void setCell(int i, int j) {
+        this.board.setCell(i, j);
+    }
+    
+    public int getRows() {
+        return this.board.getRows();
+    }
+    
+    public int getCols() {
+        return this.board.getColumns();
+    }
     
     public Cell getCell(int i, int j) {
         return this.board.getCell(i, j);

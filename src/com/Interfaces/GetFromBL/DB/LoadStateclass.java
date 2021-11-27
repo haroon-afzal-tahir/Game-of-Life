@@ -38,14 +38,14 @@ public class LoadStateclass implements LoadState {
 			int generations = Integer.parseInt(line);
 			//System.out.println(generations);
 			
-			ret_gameobj.getcontrols().setGenerations(generations);
+			ret_gameobj.getControl().setGenerations(generations);
 			
 			//speed
 			line = bufferedReader.readLine();
 			float speed = Float.parseFloat(line);
 			//System.out.println(speed);
 			
-			ret_gameobj.getcontrols().setSpeedFactor(speed);
+			ret_gameobj.getControl().setSpeedFactor(speed);
 			
 			//read the indexes of the alive cells
 			while (x != -1 && y != -1) {

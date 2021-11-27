@@ -1,7 +1,7 @@
 //////////////////////////GUI Buttons///////////////////////////////////////////////
 package com.UI;
 
-import com.FactoryImplementation.BL_Implementation;
+import com.BL.Game;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -30,7 +30,7 @@ public class Main extends Application {
     Button manage = new Button("Manage");
     Slider Zoom = new Slider(1, 10, 0.5);
     Slider Speed = new Slider(1, 10, 0.5);
-    private BL_Implementation game = new BL_Implementation(rows, columns);
+    private Game game = new Game(rows, columns);
     
     public static void main(String[] args) {
         launch(args);
