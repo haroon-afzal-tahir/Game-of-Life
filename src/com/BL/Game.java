@@ -10,7 +10,7 @@ public class Game {
     
     public Game(int rows, int cols) {
         board = new Board(rows, cols);
-        controls = new Controls(100, 1, 0, true);
+        controls = new Controls(100,  0, true);
     }
     
     public Game() {
@@ -84,4 +84,10 @@ public class Game {
     public void save() {
         DB_Listener.save(this);
     }
+
+    public boolean isAlive(int row, int column) {
+        return board.isAlive(row,column);
+
+    }
+
 }
