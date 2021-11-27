@@ -1,41 +1,33 @@
 package com.Interfaces.GetFromBL.DB;
 
-import com.BL.Cell;
 import com.BL.Game;
 import com.Interfaces.DB_I;
 
-import javax.lang.model.type.NullType;
 import java.io.*;
-import java.util.Scanner;
 
 public class DB_TXT implements DB_I {
 
-    public void delete(String StateName)
-    {
+    public void delete(String StateName) {
         // TODO Auto-generated method stub
         String filename = StateName + ".txt";
         File myFile = new File(filename);
-
-        if (myFile.delete()){
-            System.out.println(myFile.getName() + "has been deleted.\n" );
-        }
-        else {
+    
+        if (myFile.delete()) {
+            System.out.println(myFile.getName() + "has been deleted.\n");
+        } else {
             System.out.println("\nSome problem occurred while deleting the file\n");
         }
 
     }
-
-    public void save( Game obj)
-    {
-
+    
+    public void save(Game obj) {
+        
         String filePath = new File("").getAbsolutePath();
-        File dir = new File(filePath+"/files");
-
-        File[] matches = dir.listFiles(new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                return  name.endsWith(".txt");
+        File dir = new File(filePath + "/files");
+        
+        File[] matches = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".txt");
             }
         }); //checking the number of files in the folder
         int length;
@@ -122,16 +114,15 @@ public class DB_TXT implements DB_I {
 
 
     }
-
+    
     /*public Cell[][] view()
     {
 Cell[][] obj=new Cell[][];
 
 return obj;
     }*/
-    public Game load(String stateName)
-    {
-
+    public Game load(String stateName) {
+        
         Game ret_gameobj = new Game();
         String filename = stateName + ".txt";
         String line;
@@ -188,8 +179,6 @@ return obj;
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-return  ret_gameobj;
+        return ret_gameobj;
     }
 }
