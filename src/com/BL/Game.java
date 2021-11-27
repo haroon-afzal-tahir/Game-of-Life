@@ -1,12 +1,23 @@
 package com.BL;
 
+import com.Interfaces.DB_I;
+
 public class Game {
         private Controls control;
         private Board board;
-        
-        public Game() {
+        private DB_I DB_Listener;
+        private int generations;
+
+
+       public Game()
+       {}
+
+
+        public void attachDB(DB_I list)
+        {
+               this.DB_Listener=list;
+
         }
-        
         
         public Controls getcontrols() {
                 return control;
@@ -29,7 +40,12 @@ public class Game {
         }
         
         public int getgenerations() {
-                return this.control.getgenerations();
+                return generations;
+        }
+        public void setgenerations(int gen)
+        {
+                generations=gen;
+
         }
         
         public void setCell(int i, int j) {
@@ -46,5 +62,15 @@ public class Game {
         
         public Cell getCell(int i, int j) {
                 return this.board.getCell(i, j);
+        }
+        public void attachBoard(Board board)
+        {
+                this.board=board;
+
+        }
+        public void save()
+        {
+                DB_Listener.save(this);
+
         }
 }
