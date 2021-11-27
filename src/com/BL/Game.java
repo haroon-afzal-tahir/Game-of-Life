@@ -9,15 +9,13 @@ public class Game {
         private int generations;
 
 
-       public Game()
-       {}
-
-
-        public void attachDB(DB_I list)
-        {
-               this.DB_Listener=list;
-
-        }
+       public Game() {
+       }
+    
+    
+    public void attachDB(DB_I list) {
+        this.DB_Listener = list;
+    }
         
         public Controls getcontrols() {
                 return control;
@@ -38,15 +36,14 @@ public class Game {
         public float getspeedfactor() {
                 return this.control.getspeedfactor();
         }
-        
-        public int getgenerations() {
-                return generations;
-        }
-        public void setgenerations(int gen)
-        {
-                generations=gen;
-
-        }
+    
+    public int getgenerations() {
+        return generations;
+    }
+    
+    public void setgenerations(int gen) {
+        generations = gen;
+    }
         
         public void setCell(int i, int j) {
                 this.board.setCell(i, j);
@@ -59,18 +56,16 @@ public class Game {
         public int getCols() {
                 return this.board.getColumns();
         }
-        
-        public Cell getCell(int i, int j) {
-                return this.board.getCell(i, j);
-        }
-        public void attachBoard(Board board)
-        {
-                this.board=board;
-
-        }
-        public void save()
-        {
-                DB_Listener.save(this);
-
-        }
+    
+    public Cell getCell(int i, int j) {
+        return this.board.getCell(i, j);
+    }
+    
+    public void attachBoard(Board board) {
+        this.board = board;
+    }
+    
+    public void save() {
+        DB_Listener.save(this);
+    }
 }

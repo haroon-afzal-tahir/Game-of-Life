@@ -18,7 +18,7 @@ import java.io.File;
 
 public class Main extends Application {
     
-    private int rows = 20, columns = 70;
+    private int rows = 20, columns = 75;
     private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
     private GridPane gameGrid;
     private Board board = new Board(rows, columns);
@@ -112,7 +112,7 @@ public class Main extends Application {
         gridPane.setVgap(20);
         
         // Setting Alignment and Padding of GridPane
-        gridPane.setAlignment(Pos.BOTTOM_CENTER);
+        gridPane.setAlignment(Pos.CENTER);
         gridPane.setPadding(new Insets(20));
         
         return gridPane;
@@ -171,7 +171,6 @@ public class Main extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Game Of Life");
     
         GridPane BtnGrid = GetButtons();

@@ -1,28 +1,6 @@
 package com.BL;
 
 public class Board {
-	// -------------------------------------------------------------
-	// ------------------------ MAIN CODE --------------------------
-	// -------------------------------------------------------------
-	public static void main(String[] args) {
-		Board board = new Board(8, 5);
-		
-		board.setAlive(0, 0);
-		board.setAlive(0, 1);
-		board.setAlive(2, 2);
-		board.setAlive(3, 2);
-		board.setAlive(4, 2);
-		
-		System.out.println("Count: " + board.CountAliveNeighbors(3, 2));
-		
-		for (int i = 0; i < 5; i++) {
-			board.printBoard();
-			board.step();
-		}
-		
-		board.printBoard();
-		
-	}
 	
 	// -------------------------------------------------------------
 	// ------------------ VARIABLES DECLARATION --------------------
