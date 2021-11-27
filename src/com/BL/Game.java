@@ -11,7 +11,12 @@ public class Game {
 
        public Game() {
        }
-    
+
+    public Game(int rows,int columns) {
+           board=new Board(rows,columns);
+           control=new Controls(1,1,true);
+
+    }
     
     public void attachDB(DB_I list) {
         this.DB_Listener = list;
@@ -68,4 +73,52 @@ public class Game {
     public void save() {
         DB_Listener.save(this);
     }
+
+    public String view()
+    {
+        return DB_Listener.view();
+
+    }
+    public void load(String StateName)
+    {
+        Game ret=DB_Listener.load(StateName);
+        this.board.setRows(ret.getRows());
+        this.board.setColumns(ret.getCols());
+        this.board=ret.board;
+        this.control=ret.control;
+        this.generations=ret.generations;
+        this.board.printBoard();
+    }
+
+
+    public void setAlive(int row, int column) {
+        board.setAlive(row, column);
+    }
+
+    public void setDead(int row, int column) {
+        board.setDead(row, column);
+    }
+
+    public boolean isAlive(int row, int column) {
+        return board.isAlive(row, column);
+    }
+
+    public void ToggleState(int row, int column) {
+        board.ToggleState(row, column);
+    }
+    // This Function Returns The State Of The Selected Cell
+    public boolean getState(int row, int column) {
+        return board.getState(row, column);
+    }
+
+    public void step() {
+        board.step();
+    }
+    public void printBoard()
+    {
+
+        board.printBoard();
+    }
+
+
 }

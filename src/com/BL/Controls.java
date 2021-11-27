@@ -3,13 +3,13 @@ package com.BL;
 public class Controls {
 	private int zoomFactor;
 	private float speedFactor;
-	private int generations;
+
 	private boolean Play = true;
 	private int score;
 	
-	public Controls(int zm, int sf, int g, boolean p) {
+	public Controls(int zm, int sf, boolean p) {
 		this.zoomFactor = zm;
-		this.generations = g;
+
 		this.Play = p;
 		this.speedFactor = sf;
 	}
@@ -18,9 +18,7 @@ public class Controls {
 		this.speedFactor = sf;
 	}
 	
-	public void setgenerations(int g) {
-		this.generations = g;
-	}
+
 	
 	public void setzoomfactor(int zm) {
 		this.zoomFactor = zm;
@@ -33,9 +31,7 @@ public class Controls {
 		return this.speedFactor;
 	}
 	
-	public int getgenerations() {
-		return this.generations;
-	}
+
 	
 	public int getzoomfactor() {
 		return this.zoomFactor;

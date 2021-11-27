@@ -10,7 +10,7 @@ public class BL_Implementation implements BL_Interface {
 	
 	public BL_Implementation(int rows, int cols) {
 		board = new Board(rows, cols);
-		controls = new Controls(100, 100, 0, true);
+		controls = new Controls(100, 100, true);
 	}
 	
 	@Override
