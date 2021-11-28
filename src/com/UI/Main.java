@@ -8,11 +8,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -85,11 +88,19 @@ public class Main extends Application {
                 manageStates.show();
             }
         });
-        
-        
+    
+    
         // GridPane Declaration
         GridPane gridPane = new GridPane();
-        
+    
+        GridPane zoomIcon = new GridPane();
+        GridPane speedIcon = new GridPane();
+    
+        zoomIcon.add(new ImageView("com/Images/zoom.png"), 0, 0);
+        speedIcon.add(new ImageView("com/Images/speed.png"), 0, 0);
+        zoomIcon.setAlignment(Pos.TOP_RIGHT);
+        speedIcon.setAlignment(Pos.TOP_RIGHT);
+    
         // Adding Buttons in GridPane
         gridPane.add(start, 0, 0);
         gridPane.add(stop, 1, 0);
@@ -97,9 +108,9 @@ public class Main extends Application {
         gridPane.add(reset, 3, 0);
         gridPane.add(lexicon, 4, 0);
         gridPane.add(manage, 5, 0);
-        gridPane.add(new ImageView("com/Images/zoom.png"), 0, 1, 2, 1);
+        gridPane.add(zoomIcon, 0, 1, 1, 1);
         gridPane.add(Zoom, 1, 1, 2, 1);
-        gridPane.add(new ImageView("com/Images/speed.png"), 3, 1, 2, 1);
+        gridPane.add(speedIcon, 3, 1, 1, 1);
         gridPane.add(Speed, 4, 1, 2, 1);
         
         // Setting Horizontal Gap Between Buttons
@@ -229,17 +240,33 @@ public class Main extends Application {
     public GridPane MergeGridPanes(GridPane BtnGrid, GridPane BoardGrid) {
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(20));
-        
+    
+        RowConstraints Label1 = new RowConstraints();
+        Label1.setPercentHeight(5);
+    
         RowConstraints Board = new RowConstraints();
-        Board.setPercentHeight(80);
-        
+        Board.setPercentHeight(85);
+    
+    
         RowConstraints button = new RowConstraints();
-        button.setPercentHeight(20);
+        button.setPercentHeight(10);
     
-        gridPane.getRowConstraints().addAll(Board, button);
+        gridPane.getRowConstraints().addAll(Label1, Board, button);
     
-        gridPane.add(BoardGrid, 0, 0);
-        gridPane.add(BtnGrid, 0, 1);
+        GridPane LabelPane = new GridPane();
+    
+        Label label = new Label("Game of Life");
+        label.setFont(Font.font(20.0));
+        label.setTextFill(Color.WHITE);
+    
+    
+        LabelPane.add(label, 0, 0);
+        LabelPane.setAlignment(Pos.CENTER);
+        LabelPane.setPadding(new Insets(20, 20, 30, 20));
+    
+        gridPane.add(LabelPane, 0, 0);
+        gridPane.add(BoardGrid, 0, 1);
+        gridPane.add(BtnGrid, 0, 2);
     
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setStyle("-fx-background-color: #484a49");
