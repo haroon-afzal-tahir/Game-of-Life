@@ -1,5 +1,6 @@
 package com.BL;
 
+import com.Console.Console;
 import com.FactoryImplementation.Factory;
 import com.Interfaces.DB_I;
 import com.UI.Main;
@@ -98,8 +99,8 @@ public class Game implements Runnable {
 
     public void load(String statename) {
        Game ret_obj= DB_Listener.load(statename);
-       this.board=ret_obj.board;
-       this.controls=ret_obj.controls;
+        this.board = ret_obj.board;
+        this.controls = ret_obj.controls;
         this.generations = ret_obj.generations;
     }
     
@@ -119,14 +120,19 @@ public class Game implements Runnable {
         return board.isAlive(row, column);
     }
     
-    
     @Override
     public void run() {
-        Main obj = factory.getUI();
+        Main UI = factory.getUI();
+        Console console = factory.getConsole();
         this.controls.setPlay(true);
         while (this.controls.getplay() == true) {
-            obj.step();
-            obj.UpdateBoard();
+            if (UI != null) {
+                UI.step();
+                UI.UpdateBoard();
+            } else {
+                console.step();
+                console.print();
+            }
             try {
                 Thread.sleep((long) (((1 / (getspeedfactor())) * 100000)));
             } catch (InterruptedException e) {
