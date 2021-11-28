@@ -20,4 +20,6 @@ public interface UI_To_BL_Data_Transfer {
 	float getSpeedFactor();
 	
 	void setSpeedFactor(float sf);
+	
+	void StartGame();
 }

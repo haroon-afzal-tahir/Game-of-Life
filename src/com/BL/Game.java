@@ -2,6 +2,7 @@ package com.BL;
 
 import com.FactoryImplementation.Factory;
 import com.Interfaces.DB_I;
+import com.UI.Main;
 
 public class Game implements Runnable {
     private Board board;
@@ -11,23 +12,20 @@ public class Game implements Runnable {
     
     Factory factory = new Factory();
     
-    private Thread startBtn;
+    private Thread start;
     
     public Game(int rows, int cols, Factory factory) {
         board = new Board(rows, cols);
         controls = new Controls(100, 0, true);
-        startBtn = new Thread(this);
         this.factory = factory;
     }
     
     public Game(int rows, int cols) {
         board = new Board(rows, cols);
         controls = new Controls(100, 0, true);
-        startBtn = new Thread(this);
     }
     
     public Game() {
-        startBtn = new Thread(this);
     }
     
     public Board getBoard() {
@@ -124,11 +122,21 @@ public class Game implements Runnable {
     
     @Override
     public void run() {
+        Main obj = factory.getUI();
+        this.controls.setPlay(true);
         while (this.controls.getplay() == true) {
-        
+            obj.step();
+            obj.UpdateBoard();
+            try {
+                Thread.sleep((long) (((1 / (getspeedfactor())) * 100000)));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
     
-    public void playGame() {
+    public void StartGame() {
+        start = new Thread(this);
+        start.start();
     }
 }

@@ -11,10 +11,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -25,7 +22,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class Main extends Application implements Runnable, UI_To_BL_Data_Transfer {
+public class Main extends Application implements UI_To_BL_Data_Transfer {
     
     Button start = new Button("Start");
     Button stop = new Button("Stop");
@@ -42,21 +39,21 @@ public class Main extends Application implements Runnable, UI_To_BL_Data_Transfe
     
     Button loadLexicon = new Button("Load Lexicon");
     
+    Button Submit = new Button("Submit");
+    
     Slider Zoom = new Slider(0, 10, 0.5);
     Slider Speed = new Slider(1, 10, 0.5);
     
     Stage loadStates = new Stage();
     Stage manageStates = new Stage();
     Stage lexiconStates = new Stage();
-    
-    
-    Thread startBtn;
+    Stage saveState = new Stage();
+    Stage deleteStates = new Stage();
     
     private int rows = 20, columns = 75;
     private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
     
     Factory factory = new Factory();
-    
     private Game game = new Game(rows, columns, factory);
     
     public static void main(String[] args) {
@@ -215,9 +212,10 @@ public class Main extends Application implements Runnable, UI_To_BL_Data_Transfe
                     public void handle(MouseEvent mouseEvent) {
                         setPlay(true);
                         //if (startBtn.isAlive() == false) {
-                        startBtn = new Thread(Main.this);
-                        startBtn.start();
+                        //startBtn = new Thread(Main.this);
+                        //startBtn.start();
                         //}
+                        StartGame();
                     }
                 });
 
@@ -240,10 +238,7 @@ public class Main extends Application implements Runnable, UI_To_BL_Data_Transfe
                 gridPane.add(grid_buttons[i][j], j, i);
             }
         }
-        /*
-     
-     
-         */
+
         Speed.setValue(getSpeedFactor() / 500);
         Zoom.setValue(getZoomFactor());
     
@@ -306,28 +301,43 @@ public class Main extends Application implements Runnable, UI_To_BL_Data_Transfe
 
     public GridPane ManageGridPane() {
         GridPane gridPane = new GridPane();
-
+    
         save.setMinWidth(100);
         load.setMinWidth(100);
         delete.setMinWidth(100);
-
+    
         save.getStyleClass().removeAll();
         save.getStyleClass().add("SimpleButton");
-
+        save.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                setPlay(false);
+                saveState.show();
+            }
+        });
+    
+    
         load.getStyleClass().removeAll();
         load.getStyleClass().add("SimpleButton");
-
+    
         delete.getStyleClass().removeAll();
         delete.getStyleClass().add("SimpleButton");
-
-
+        delete.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                setPlay(false);
+                deleteStates.show();
+            }
+        });
+    
+    
         load.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 loadStates.show();
             }
         });
-
+    
         gridPane.add(save, 0, 0);
         gridPane.add(load, 1, 0);
         gridPane.add(delete, 2, 0);
@@ -399,6 +409,62 @@ public class Main extends Application implements Runnable, UI_To_BL_Data_Transfe
         gridPane.add(list, 0, 0, 1, 3);
         
         gridPane.add(loadLexicon, 1, 0);
+    
+        gridPane.setHgap(20);
+        gridPane.setVgap(20);
+    
+        gridPane.setPadding(new Insets(30));
+        gridPane.setStyle("-fx-background-color: #484a49");
+    
+        return gridPane;
+    }
+    
+    public GridPane SavesState() {
+        GridPane gridPane = new GridPane();
+        
+        Label label = new Label("Enter State Name:");
+        label.setTextFill(Color.WHITE);
+        TextField textField = new TextField();
+        
+        Submit.setMinWidth(100);
+        Submit.getStyleClass().removeAll();
+        Submit.getStyleClass().add("SimpleButton");
+        
+        gridPane.add(label, 0, 0);
+        gridPane.add(textField, 0, 1);
+        gridPane.add(Submit, 0, 2);
+        
+        gridPane.setAlignment(Pos.CENTER);
+        
+        gridPane.setVgap(20);
+        
+        gridPane.setPadding(new Insets(30));
+        gridPane.setStyle("-fx-background-color: #484a49");
+        
+        return gridPane;
+    }
+    
+    public GridPane DeleteState() {
+        GridPane gridPane = new GridPane();
+        
+        Button deleteSave = new Button("Delete State");
+        
+        deleteSave.setMinWidth(100);
+        
+        deleteSave.getStyleClass().removeAll();
+        deleteSave.getStyleClass().add("SimpleButton");
+        
+        ListView<String> list = new ListView<String>();
+        
+        ObservableList<String> items = FXCollections.observableArrayList(
+                "State 1", "State 2", "State 3", "State 4", "State 5"
+        );
+        
+        list.setItems(items);
+        
+        gridPane.add(list, 0, 0, 1, 3);
+        
+        gridPane.add(deleteSave, 1, 0);
         
         gridPane.setHgap(20);
         gridPane.setVgap(20);
@@ -413,15 +479,21 @@ public class Main extends Application implements Runnable, UI_To_BL_Data_Transfe
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Game Of Life");
         
+        factory.setUI(this);
+        
         Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
         Scene manageState = new Scene(ManageGridPane(), 500, 200);
-        Scene viewStates = new Scene(ViewStates(), 600, 400);
-        Scene lexiconScene = new Scene(LexiconStates(), 600, 400);
+        Scene viewStates = new Scene(ViewStates(), 400, 200);
+        Scene lexiconScene = new Scene(LexiconStates(), 400, 200);
+        Scene saveStates = new Scene(SavesState(), 400, 200);
+        Scene deleteState = new Scene(DeleteState(), 400, 200);
         
         scene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         manageState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         viewStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         lexiconScene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+        saveStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+        deleteState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         
         primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
@@ -435,19 +507,12 @@ public class Main extends Application implements Runnable, UI_To_BL_Data_Transfe
         
         lexiconStates.setTitle("Lexicons");
         lexiconStates.setScene(lexiconScene);
-    }
-
-    @Override
-    public void run() {
-        while (game.getControl().getplay() == true) {
-            try {
-                Thread.sleep((long) (((1 / (getSpeedFactor())) * 100000)));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            game.getBoard().step();
-            UpdateBoard();
-        }
+        
+        saveState.setTitle("Save A State");
+        saveState.setScene(saveStates);
+        
+        deleteStates.setTitle("Delete A State");
+        deleteStates.setScene(deleteState);
     }
     
     @Override
@@ -498,5 +563,10 @@ public class Main extends Application implements Runnable, UI_To_BL_Data_Transfe
     @Override
     public void setSpeedFactor(float sf) {
         game.getControl().setSpeedFactor(sf);
+    }
+    
+    @Override
+    public void StartGame() {
+        game.StartGame();
     }
 }
