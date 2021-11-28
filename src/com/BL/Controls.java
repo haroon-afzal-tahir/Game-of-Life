@@ -23,7 +23,7 @@ public class Controls {
 	}
 	
 	public float getSpeedFactor() {
-		return this.speedFactor * 1000;
+		return this.speedFactor * 500;
 	}
 	
 	public void setSpeedFactor(float sf) {

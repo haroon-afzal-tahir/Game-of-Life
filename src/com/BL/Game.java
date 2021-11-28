@@ -1,30 +1,39 @@
 package com.BL;
 
+import com.FactoryImplementation.Factory;
 import com.Interfaces.DB_I;
 
-public class Game {
+public class Game implements Runnable {
     private Board board;
     private Controls controls;
     private DB_I DB_Listener;
     private int generations;
-
+    
+    Factory factory = new Factory();
+    
+    private Thread startBtn;
+    
+    public Game(int rows, int cols, Factory factory) {
+        board = new Board(rows, cols);
+        controls = new Controls(100, 0, true);
+        startBtn = new Thread(this);
+        this.factory = factory;
+    }
+    
     public Game(int rows, int cols) {
         board = new Board(rows, cols);
         controls = new Controls(100, 0, true);
+        startBtn = new Thread(this);
     }
-
+    
     public Game() {
+        startBtn = new Thread(this);
     }
-
-    public void updateBoard() throws InterruptedException {
-        this.board.step();
-        Thread.sleep((long) this.controls.getSpeedFactor());
-    }
-
+    
     public Board getBoard() {
         return board;
     }
-
+    
     public void setBoard(Board obj) {
         board = obj;
     }
@@ -86,39 +95,40 @@ public class Game {
     }
 
     public String view() {
-
         return DB_Listener.view();
-
     }
 
     public void load(String statename) {
        Game ret_obj= DB_Listener.load(statename);
        this.board=ret_obj.board;
        this.controls=ret_obj.controls;
-       this.generations= ret_obj.generations;
-
-
-
+        this.generations = ret_obj.generations;
     }
-
+    
     public void delete(String statename) {
         DB_Listener.delete(statename);
-
     }
-
+    
     public void printboard() {
-
         board.printBoard();
     }
-
-    public void step()
-    {
+    
+    public void step() {
         board.step();
     }
-
+    
     public boolean isAlive(int row, int column) {
-        return board.isAlive(row,column);
-
+        return board.isAlive(row, column);
     }
-
+    
+    
+    @Override
+    public void run() {
+        while (this.controls.getplay() == true) {
+        
+        }
+    }
+    
+    public void playGame() {
+    }
 }

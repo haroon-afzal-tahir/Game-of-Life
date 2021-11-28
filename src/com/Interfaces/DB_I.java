@@ -8,7 +8,8 @@ public interface DB_I {
 	
 	void save(Game obj);
 	
-	 public String view();
+	String view();
+	
 	Game load(String stateName);
 	
 }

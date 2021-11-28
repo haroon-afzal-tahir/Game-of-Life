@@ -1,12 +1,9 @@
 package com.Interfaces.GetFromBL.DB;
 
-import com.BL.Cell;
 import com.BL.Game;
 import com.Interfaces.DB_I;
 
-import javax.lang.model.type.NullType;
 import java.io.*;
-import java.util.Scanner;
 
 public class DB_TXT implements DB_I {
 
@@ -129,19 +126,17 @@ public class DB_TXT implements DB_I {
 
     public String view()
     {
-
-        String StateNames=new String();
+    
+        String StateNames = "";
         String filePath = new File("").getAbsolutePath();
-        File dir = new File(filePath+"/files");
-
-        File[] matches = dir.listFiles(new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                return  name.endsWith(".txt");
+        File dir = new File(filePath + "/files");
+    
+        File[] matches = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".txt");
             }
         }); //checking the number of files in the folder
-        for(int i=0;i<matches.length;i++) {
+        for (int i = 0; i < matches.length; i++) {
 
             StateNames=StateNames.concat(matches[i].getName() + "\n");
         }
@@ -166,25 +161,24 @@ public class DB_TXT implements DB_I {
             line = bufferedReader.readLine();
             int rows = Integer.parseInt(line);
             //System.out.println(rows);
-
-
-
+    
+    
             //total columns of the grid
             line = bufferedReader.readLine();
             int columns = Integer.parseInt(line);
             //System.out.println(columns);
-
-
-            ret_gameobj=new Game(rows,columns);
+    
+    
+            //ret_gameobj=new Game(rows,columns);
             //generations
             line = bufferedReader.readLine();
             int generations = Integer.parseInt(line);
             //System.out.println(generations);
-
+    
             ret_gameobj.setgenerations(generations);
-
+    
             //speed
-
+    
             //System.out.println(speed);
 
             ret_gameobj.setspeedfactor(1);

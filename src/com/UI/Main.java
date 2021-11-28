@@ -2,7 +2,8 @@
 package com.UI;
 
 import com.BL.Game;
-import com.Interfaces.GetFromBL.DB.ViewState;
+import com.FactoryImplementation.Factory;
+import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,8 +25,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class Main extends Application implements Runnable {
-
+public class Main extends Application implements Runnable, UI_To_BL_Data_Transfer {
+    
     Button start = new Button("Start");
     Button stop = new Button("Stop");
     Button next = new Button("Next");
@@ -35,31 +36,37 @@ public class Main extends Application implements Runnable {
     Button save = new Button("Save State");
     Button load = new Button("Load State");
     Button delete = new Button("Delete State");
-
+    
     Button deleteState = new Button("Delete State");
     Button loadState = new Button("Load State");
-
+    
+    Button loadLexicon = new Button("Load Lexicon");
+    
     Slider Zoom = new Slider(0, 10, 0.5);
     Slider Speed = new Slider(1, 10, 0.5);
-
+    
     Stage loadStates = new Stage();
     Stage manageStates = new Stage();
-
-
+    Stage lexiconStates = new Stage();
+    
+    
     Thread startBtn;
-
+    
     private int rows = 20, columns = 75;
     private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
-    private Game game = new Game(rows, columns);
-
+    
+    Factory factory = new Factory();
+    
+    private Game game = new Game(rows, columns, factory);
+    
     public static void main(String[] args) {
         launch(args);
     }
-
+    
     public void UpdateBoard() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                if (!game.getBoard().getCell(i, j).isAlive()) {
+                if (!getCellStatus(i, j)) {
                     grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
                     grid_buttons[i][j].getStyleClass().add("UnselectedButton");
                 } else {
@@ -75,43 +82,50 @@ public class Main extends Application implements Runnable {
         Zoom.setShowTickLabels(true);
         Zoom.setMajorTickUnit(0.25f);
         Zoom.setBlockIncrement(0.1f);
-
+    
         Speed.setShowTickMarks(true);
         Speed.setShowTickLabels(true);
         Speed.setMajorTickUnit(0.25f);
         Speed.setBlockIncrement(0.1f);
-
-        game.getControl().setZoomFactor(0);
-        game.getControl().setSpeedFactor(1);
-
+    
+        setZoomFactor(0);
+        setSpeedFactor(1);
+    
         start.setMinWidth(100);
         stop.setMinWidth(100);
         next.setMinWidth(100);
         reset.setMinWidth(100);
         lexicon.setMinWidth(100);
         manage.setMinWidth(100);
-
+    
         start.getStyleClass().removeAll();
         start.getStyleClass().add("SimpleButton");
 
         stop.getStyleClass().removeAll();
         stop.getStyleClass().add("SimpleButton");
-
+    
         next.getStyleClass().removeAll();
         next.getStyleClass().add("SimpleButton");
-
+    
         reset.getStyleClass().removeAll();
         reset.getStyleClass().add("SimpleButton");
-
+    
         lexicon.getStyleClass().removeAll();
         lexicon.getStyleClass().add("SimpleButton");
-
+        lexicon.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                setPlay(false);
+                lexiconStates.show();
+            }
+        });
+    
         manage.getStyleClass().removeAll();
         manage.getStyleClass().add("SimpleButton");
         manage.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.getControl().setPlay(false);
+                setPlay(false);
                 manageStates.show();
             }
         });
@@ -166,11 +180,11 @@ public class Main extends Application implements Runnable {
                         if (game.getBoard().getCell(finalI, finalJ).isAlive() == false) {
                             grid_buttons[finalI][finalJ].getStyleClass().removeAll("UnselectedButton");
                             grid_buttons[finalI][finalJ].getStyleClass().add("SelectedButton");
-                            game.getBoard().setAlive(finalI, finalJ);
+                            setAlive(finalI, finalJ);
                         } else {
                             grid_buttons[finalI][finalJ].getStyleClass().removeAll("SelectedButton");
                             grid_buttons[finalI][finalJ].getStyleClass().add("UnselectedButton");
-                            game.getBoard().setDead(finalI, finalJ);
+                            setDead(finalI, finalJ);
                         }
                     }
                 });
@@ -178,7 +192,7 @@ public class Main extends Application implements Runnable {
                 next.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        game.getBoard().step();
+                        step();
                         UpdateBoard();
                     }
                 });
@@ -190,7 +204,7 @@ public class Main extends Application implements Runnable {
                             for (int j = 0; j < columns; j++) {
                                 grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
                                 grid_buttons[i][j].getStyleClass().add("UnselectedButton");
-                                game.getBoard().setDead(i, j);
+                                setDead(i, j);
                             }
                         }
                     }
@@ -199,7 +213,7 @@ public class Main extends Application implements Runnable {
                 start.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        game.getControl().setPlay(true);
+                        setPlay(true);
                         //if (startBtn.isAlive() == false) {
                         startBtn = new Thread(Main.this);
                         startBtn.start();
@@ -210,7 +224,7 @@ public class Main extends Application implements Runnable {
                 stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        game.getControl().setPlay(false);
+                        setPlay(false);
                     }
                 });
 
@@ -222,31 +236,31 @@ public class Main extends Application implements Runnable {
                         gridPane.setPadding(new Insets(mouseEvent.getSceneY(), 20, 20, mouseEvent.getSceneX()));
                     }
                 });
-
+    
                 gridPane.add(grid_buttons[i][j], j, i);
             }
         }
         /*
-
-
+     
+     
          */
-        Speed.setValue(game.getControl().getSpeedFactor() / 500);
-        Zoom.setValue(game.getControl().getZoomfactor());
-
+        Speed.setValue(getSpeedFactor() / 500);
+        Zoom.setValue(getZoomFactor());
+    
         Speed.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.getControl().setSpeedFactor(((float) Speed.getValue()));
+                setSpeedFactor(((float) Speed.getValue()));
             }
         });
-
+    
         Zoom.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                double prev = game.getControl().getZoomfactor(), next = Zoom.getValue();
+                double prev = getZoomFactor(), next = Zoom.getValue();
                 gridPane.setScaleX(gridPane.getScaleX() + (next - prev));
                 gridPane.setScaleY(gridPane.getScaleY() + (next - prev));
-                game.getControl().setZoomFactor((float) next);
+                setZoomFactor((float) next);
             }
         });
 
@@ -353,51 +367,136 @@ public class Main extends Application implements Runnable {
         gridPane.add(list, 0 , 0, 1, 3);
 
         gridPane.add(loadState, 1, 0);
-
+    
         gridPane.add(deleteState, 1, 1);
-
+    
         gridPane.setHgap(20);
         gridPane.setVgap(20);
-
+    
         gridPane.setPadding(new Insets(30));
         gridPane.setStyle("-fx-background-color: #484a49");
-
+    
         return gridPane;
     }
-
+    
+    public GridPane LexiconStates() {
+        GridPane gridPane = new GridPane();
+        
+        loadLexicon.setMinWidth(100);
+        
+        loadLexicon.getStyleClass().removeAll();
+        loadLexicon.getStyleClass().add("SimpleButton");
+        
+        ListView<String> list = new ListView<String>();
+        
+        ObservableList<String> items = FXCollections.observableArrayList(
+                "Lexicon 1", "Lexicon 2", "Lexicon 3", "Lexicon 4", "Lexicon 5"
+        );
+        
+        
+        list.setItems(items);
+        
+        gridPane.add(list, 0, 0, 1, 3);
+        
+        gridPane.add(loadLexicon, 1, 0);
+        
+        gridPane.setHgap(20);
+        gridPane.setVgap(20);
+        
+        gridPane.setPadding(new Insets(30));
+        gridPane.setStyle("-fx-background-color: #484a49");
+        
+        return gridPane;
+    }
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Game Of Life");
-
+        
         Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
         Scene manageState = new Scene(ManageGridPane(), 500, 200);
         Scene viewStates = new Scene(ViewStates(), 600, 400);
-
+        Scene lexiconScene = new Scene(LexiconStates(), 600, 400);
+        
         scene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         manageState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         viewStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
-
+        lexiconScene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+        
         primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
         primaryStage.show();
-
+        
         manageStates.setTitle("Manage States");
         manageStates.setScene(manageState);
-
+        
         loadStates.setTitle("All States");
         loadStates.setScene(viewStates);
+        
+        lexiconStates.setTitle("Lexicons");
+        lexiconStates.setScene(lexiconScene);
     }
 
     @Override
     public void run() {
         while (game.getControl().getplay() == true) {
             try {
-                Thread.sleep((long) (((1 /(game.getControl().getSpeedFactor())) * 100000)));
+                Thread.sleep((long) (((1 / (getSpeedFactor())) * 100000)));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             game.getBoard().step();
             UpdateBoard();
         }
+    }
+    
+    @Override
+    public void setAlive(int row, int column) {
+        game.getBoard().getCell(row, column).setAlive(true);
+    }
+    
+    @Override
+    public void setDead(int row, int column) {
+        game.getBoard().getCell(row, column).setDead(false);
+    }
+    
+    @Override
+    public boolean getCellStatus(int row, int column) {
+        return game.getBoard().getCell(row, column).isAlive();
+    }
+    
+    @Override
+    public void step() {
+        game.getBoard().step();
+    }
+    
+    @Override
+    public boolean getPlay() {
+        return game.getControl().getplay();
+    }
+    
+    @Override
+    public void setPlay(boolean play) {
+        game.getControl().setPlay(play);
+    }
+    
+    @Override
+    public float getZoomFactor() {
+        return game.getControl().getZoomfactor();
+    }
+    
+    @Override
+    public void setZoomFactor(float zf) {
+        game.getControl().setZoomFactor(zf);
+    }
+    
+    @Override
+    public float getSpeedFactor() {
+        return game.getControl().getSpeedFactor();
+    }
+    
+    @Override
+    public void setSpeedFactor(float sf) {
+        game.getControl().setSpeedFactor(sf);
     }
 }
