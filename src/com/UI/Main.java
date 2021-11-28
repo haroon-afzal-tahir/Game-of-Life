@@ -19,18 +19,20 @@ import java.io.File;
 
 public class Main extends Application {
     
-    private int rows = 20, columns = 75;
-    private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
-    
     Button start = new Button("Start");
     Button stop = new Button("Stop");
     Button next = new Button("Next");
     Button reset = new Button("Reset");
     Button lexicon = new Button("Lexicon");
     Button manage = new Button("Manage");
+    Button save = new Button("Save State");
+    Button load = new Button("Load State");
+    Button delete = new Button("Delete State");
     Slider Zoom = new Slider(0, 10, 0.5);
     Slider Speed = new Slider(0, 10, 0.5);
-    
+    Stage manageStates = new Stage();
+    private int rows = 20, columns = 75;
+    private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
     private Game game = new Game(rows, columns);
     
     public static void main(String[] args) {
@@ -76,6 +78,14 @@ public class Main extends Application {
         
         manage.getStyleClass().removeAll();
         manage.getStyleClass().add("SimpleButton");
+        manage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                game.getControl().setPlay(false);
+                manageStates.show();
+            }
+        });
+        
         
         // GridPane Declaration
         GridPane gridPane = new GridPane();
@@ -158,6 +168,34 @@ public class Main extends Application {
                     }
                 });
     
+                start.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        game.getControl().setPlay(true);
+                        while (game.getControl().getplay()) {
+                            game.getBoard().step();
+                            for (int i = 0; i < rows; i++) {
+                                for (int j = 0; j < columns; j++) {
+                                    if (!game.getBoard().getCell(i, j).isAlive()) {
+                                        grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
+                                        grid_buttons[i][j].getStyleClass().add("UnselectedButton");
+                                    } else {
+                                        grid_buttons[i][j].getStyleClass().removeAll("UnselectedButton");
+                                        grid_buttons[i][j].getStyleClass().add("SelectedButton");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+    
+                stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        game.getControl().setPlay(false);
+                    }
+                });
+    
                 gridPane.add(grid_buttons[i][j], j, i);
             }
         }
@@ -197,33 +235,63 @@ public class Main extends Application {
         
         RowConstraints button = new RowConstraints();
         button.setPercentHeight(20);
-        
+    
         gridPane.getRowConstraints().addAll(Board, button);
-        
+    
         gridPane.add(BoardGrid, 0, 0);
         gridPane.add(BtnGrid, 0, 1);
-        
+    
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setStyle("-fx-background-color: #484a49");
+        return gridPane;
+    }
+    
+    public GridPane ManageGridPane() {
+        GridPane gridPane = new GridPane();
+        
+        save.setMinWidth(100);
+        load.setMinWidth(100);
+        delete.setMinWidth(100);
+        
+        save.getStyleClass().removeAll();
+        save.getStyleClass().add("SimpleButton");
+        
+        load.getStyleClass().removeAll();
+        load.getStyleClass().add("SimpleButton");
+        
+        delete.getStyleClass().removeAll();
+        delete.getStyleClass().add("SimpleButton");
+        
+        
+        gridPane.add(save, 0, 0);
+        gridPane.add(load, 1, 0);
+        gridPane.add(delete, 2, 0);
+        
+        gridPane.setHgap(20);
+        gridPane.setVgap(20);
+        
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setPadding(new Insets(30));
+        gridPane.setStyle("-fx-background-color: #484a49");
+        
         return gridPane;
     }
     
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Game Of Life");
-    
-        GridPane BtnGrid = GetButtons();
-        GridPane BoardGrid = GetBoard();
-    
-        GridPane gameGrid = MergeGridPanes(BtnGrid, BoardGrid);
-    
-        Scene scene = new Scene(gameGrid, 1, 1);
-    
+        
+        Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
+        Scene manageState = new Scene(ManageGridPane(), 500, 200);
+        
         scene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
-    
+        manageState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+        
         primaryStage.setMaximized(true);
-        primaryStage.setFullScreen(true);
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        manageStates.setTitle("Manage States");
+        manageStates.setScene(manageState);
     }
 }

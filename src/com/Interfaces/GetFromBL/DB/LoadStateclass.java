@@ -38,7 +38,7 @@ public class LoadStateclass implements LoadState {
 			int generations = Integer.parseInt(line);
 			//System.out.println(generations);
 			
-			ret_gameobj.getControl().setGenerations(generations);
+			//ret_gameobj.getControl().setGenerations(generations);
 			
 			//speed
 			line = bufferedReader.readLine();

@@ -30,8 +30,6 @@ public class Controls {
 		this.speedFactor = sf;
 	}
 
-	
-
 	public float getZoomfactor() {
 		return this.zoomFactor;
 	}
