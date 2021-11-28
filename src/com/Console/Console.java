@@ -13,6 +13,8 @@ public class Console implements UI_To_BL_Data_Transfer {
 	Factory factory;
 	Game game;
 	
+	final static Scanner input = new Scanner(System.in);
+	
 	public Console(int rows, int columns, Factory factory) {
 		this.rows = rows;
 		this.columns = columns;
@@ -22,10 +24,11 @@ public class Console implements UI_To_BL_Data_Transfer {
 	}
 	
 	public static void main(String[] args) {
-		Scanner input = new Scanner(System.in);
 		Factory factory = new Factory();
 		Console obj = new Console(20, 75, factory);
 		factory.setConsole(obj);
+		obj.setZoomFactor(1);
+		obj.setSpeedFactor(500);
 		
 		while (obj.getPlay() == true) {
 			obj.printCommands();
@@ -35,16 +38,26 @@ public class Console implements UI_To_BL_Data_Transfer {
 			
 			switch (choice) {
 				case 1:
+					obj.setPlay(true);
 					break;
 				case 2:
+					obj.setPlay(false);
 					break;
 				case 3:
+					obj.setSpeedFactor(obj.getSpeedFactor() + 500);
 					break;
 				case 4:
+					obj.setSpeedFactor(obj.getSpeedFactor() - 500);
 					break;
 				case 5:
+					if (obj.getZoomFactor() < 10) {
+						obj.setZoomFactor((obj.getZoomFactor() + 100));
+					}
 					break;
 				case 6:
+					if (obj.getZoomFactor() > 1) {
+						obj.setZoomFactor((obj.getZoomFactor() - 100));
+					}
 					break;
 				case 7:
 					break;
@@ -58,11 +71,28 @@ public class Console implements UI_To_BL_Data_Transfer {
 					break;
 				case 12:
 					break;
+				case 13:
+					obj.print();
+					input(obj);
+					break;
 				default:
+					obj.print();
 					break;
 			}
 		}
 		
+	}
+	
+	public static void input(Console obj) {
+		System.out.print(Color.RED + "Enter X-Coordinate and Y-Coordinate (i.e. num1 num2): ");
+		int x = 0, y = 0;
+		x = input.nextInt();
+		y = input.nextInt();
+		
+		if (obj.getCellStatus(x, y))
+			obj.setDead(x, y);
+		else
+			obj.setAlive(x, y);
 	}
 	
 	public void printCommands() {
@@ -75,44 +105,43 @@ public class Console implements UI_To_BL_Data_Transfer {
 		System.out.println(Color.YELLOW + "6. " + Color.CYAN + "Press ']' To Zoom Out The Game");
 		System.out.println(Color.YELLOW + "7. " + Color.CYAN + "Press '1' To Save The State");
 		System.out.println(Color.YELLOW + "8. " + Color.CYAN + "Press '2' To Load The State");
-		System.out.println(Color.YELLOW + "9. " + Color.CYAN + "Press 'v' To View States");
-		System.out.println(Color.YELLOW + "10. " + Color.CYAN + "Press '3' To Delete The State");
+		System.out.println(Color.YELLOW + "9. " + Color.CYAN + "Press '3' To Delete The State");
+		System.out.println(Color.YELLOW + "10. " + Color.CYAN + "Press 'v' To View States");
 		System.out.println(Color.YELLOW + "11. " + Color.CYAN + "Press ']' To Reset The State");
 		System.out.println(Color.YELLOW + "12. " + Color.CYAN + "Press 'n' To Move To The Next State");
+		System.out.println(Color.YELLOW + "13. " + Color.CYAN + "Press 'i' To Take Input");
 		
 		System.out.print(Color.GREEN + "\nYour Choice: ");
-	}
-	
-	public void input(Console obj) {
-	
 	}
 	
 	public void print() {
 		System.out.println();
 		
+		System.out.print("\t");
+		for (int j = 0; j < columns; j++) {
+			System.out.print(Color.CYAN);
+			System.out.print(j + "\t");
+		}
+		System.out.println();
+		
 		for (int i = 0; i < rows; i++) {
-			System.out.print("\t");
+			System.out.print(Color.CYAN);
+			System.out.print(i + "\t");
+			
 			for (int j = 0; j < columns; j++) {
-				System.out.print(Color.CYAN);
-				System.out.print(j + "\t");
-			}
-			for (int j = 0; j < columns; j++) {
-				System.out.print(Color.CYAN);
-				System.out.print(i + "\t");
 				if (getCellStatus(i, j)) {
 					System.out.print(Color.RED);
 				} else {
-					System.out.print(Color.RESET);
+					System.out.print(Color.WHITE);
 				}
 				System.out.print((char) 0x25A0);
-				for (int k = 0; k < getZoomFactor(); k++) {
+				for (int k = 0; k < (getZoomFactor() / 100); k++) {
 					System.out.print("\t");
 				}
 			}
-			for (int j = 0; j < getZoomFactor(); j++) {
-				System.out.println();
-			}
+			System.out.println();
 		}
+		
 		System.out.print(Color.WHITE);
 		System.out.println("\n\n\n---------------------------------------------------------");
 		
