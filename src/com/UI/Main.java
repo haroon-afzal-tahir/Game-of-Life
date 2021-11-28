@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class Main extends Application {
+public class Main extends Application implements Runnable {
 
     Button start = new Button("Start");
     Button stop = new Button("Stop");
@@ -40,10 +40,13 @@ public class Main extends Application {
     Button loadState = new Button("Load State");
 
     Slider Zoom = new Slider(0, 10, 0.5);
-    Slider Speed = new Slider(0, 10, 0.5);
+    Slider Speed = new Slider(1, 10, 0.5);
 
     Stage loadStates = new Stage();
     Stage manageStates = new Stage();
+
+
+    Thread startBtn;
 
     private int rows = 20, columns = 75;
     private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
@@ -51,6 +54,20 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void UpdateBoard() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (!game.getBoard().getCell(i, j).isAlive()) {
+                    grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
+                    grid_buttons[i][j].getStyleClass().add("UnselectedButton");
+                } else {
+                    grid_buttons[i][j].getStyleClass().removeAll("UnselectedButton");
+                    grid_buttons[i][j].getStyleClass().add("SelectedButton");
+                }
+            }
+        }
     }
 
     public GridPane GetButtons() {
@@ -65,8 +82,7 @@ public class Main extends Application {
         Speed.setBlockIncrement(0.1f);
 
         game.getControl().setZoomFactor(0);
-        game.getControl().setSpeedFactor(0);
-
+        game.getControl().setSpeedFactor(1);
 
         start.setMinWidth(100);
         stop.setMinWidth(100);
@@ -163,17 +179,7 @@ public class Main extends Application {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         game.getBoard().step();
-                        for (int i = 0; i < rows; i++) {
-                            for (int j = 0; j < columns; j++) {
-                                if (!game.getBoard().getCell(i, j).isAlive()) {
-                                    grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
-                                    grid_buttons[i][j].getStyleClass().add("UnselectedButton");
-                                } else {
-                                    grid_buttons[i][j].getStyleClass().removeAll("UnselectedButton");
-                                    grid_buttons[i][j].getStyleClass().add("SelectedButton");
-                                }
-                            }
-                        }
+                        UpdateBoard();
                     }
                 });
 
@@ -194,22 +200,10 @@ public class Main extends Application {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         game.getControl().setPlay(true);
-                        /*
-                        while (game.getControl().getplay()) {
-                            game.getBoard().step();
-                            for (int i = 0; i < rows; i++) {
-                                for (int j = 0; j < columns; j++) {
-                                    if (!game.getBoard().getCell(i, j).isAlive()) {
-                                        grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
-                                        grid_buttons[i][j].getStyleClass().add("UnselectedButton");
-                                    } else {
-                                        grid_buttons[i][j].getStyleClass().removeAll("UnselectedButton");
-                                        grid_buttons[i][j].getStyleClass().add("SelectedButton");
-                                    }
-                                }
-                            }
-                        }
-                        */
+                        //if (startBtn.isAlive() == false) {
+                        startBtn = new Thread(Main.this);
+                        startBtn.start();
+                        //}
                     }
                 });
 
@@ -236,13 +230,13 @@ public class Main extends Application {
 
 
          */
-        Speed.setValue(game.getControl().getSpeedFactor());
+        Speed.setValue(game.getControl().getSpeedFactor() / 500);
         Zoom.setValue(game.getControl().getZoomfactor());
 
         Speed.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.getControl().setSpeedFactor((float) Speed.getValue());
+                game.getControl().setSpeedFactor(((float) Speed.getValue()));
             }
         });
 
@@ -392,5 +386,18 @@ public class Main extends Application {
 
         loadStates.setTitle("All States");
         loadStates.setScene(viewStates);
+    }
+
+    @Override
+    public void run() {
+        while (game.getControl().getplay() == true) {
+            try {
+                Thread.sleep((long) (((1 /(game.getControl().getSpeedFactor())) * 100000)));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            game.getBoard().step();
+            UpdateBoard();
+        }
     }
 }
