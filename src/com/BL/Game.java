@@ -124,7 +124,6 @@ public class Game implements Runnable {
     public void run() {
         Main UI = factory.getUI();
         Console console = factory.getConsole();
-        this.controls.setPlay(true);
         while (this.controls.getplay() == true) {
             if (UI != null) {
                 UI.step();

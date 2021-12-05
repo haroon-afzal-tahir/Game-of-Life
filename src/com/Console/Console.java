@@ -25,54 +25,60 @@ public class Console implements UI_To_BL_Data_Transfer {
 	
 	public static void main(String[] args) {
 		Factory factory = new Factory();
-		Console obj = new Console(20, 75, factory);
+		Console obj = new Console(10, 10, factory);
 		factory.setConsole(obj);
-		obj.setZoomFactor(1);
-		obj.setSpeedFactor(500);
+		obj.setZoomFactor(100);
+		obj.setSpeedFactor(0.2f);
 		
-		while (obj.getPlay() == true) {
+		char choice = 's';
+		while (checkInput(choice)) {
+			obj.print();
 			obj.printCommands();
-			int choice = 0;
-			
-			choice = input.nextInt();
+			choice = input.next().charAt(0);
 			
 			switch (choice) {
-				case 1:
+				case 's':
 					obj.setPlay(true);
+					obj.StartGame();
 					break;
-				case 2:
+				case 'S':
 					obj.setPlay(false);
 					break;
-				case 3:
-					obj.setSpeedFactor(obj.getSpeedFactor() + 500);
+				case '+':
+					if (obj.getSpeedFactor() < 0.3f) {
+						obj.setSpeedFactor((float) (obj.getSpeedFactor() + 0.01));
+					}
 					break;
-				case 4:
-					obj.setSpeedFactor(obj.getSpeedFactor() - 500);
+				case '-':
+					if (obj.getSpeedFactor() > 0.2f) {
+						obj.setSpeedFactor((float) (obj.getSpeedFactor() - 0.01));
+					}
 					break;
-				case 5:
-					if (obj.getZoomFactor() < 10) {
+				case '[':
+					if (obj.getZoomFactor() < 1000) {
 						obj.setZoomFactor((obj.getZoomFactor() + 100));
 					}
 					break;
-				case 6:
-					if (obj.getZoomFactor() > 1) {
+				case ']':
+					if (obj.getZoomFactor() > 100) {
 						obj.setZoomFactor((obj.getZoomFactor() - 100));
 					}
 					break;
-				case 7:
+				case '1':
 					break;
-				case 8:
+				case '2':
 					break;
-				case 9:
+				case '3':
 					break;
-				case 10:
+				case 'v':
 					break;
-				case 11:
+				case 'r':
+					reset(obj);
 					break;
-				case 12:
+				case 'n':
+					step(obj);
 					break;
-				case 13:
-					obj.print();
+				case 'i':
 					input(obj);
 					break;
 				default:
@@ -95,21 +101,43 @@ public class Console implements UI_To_BL_Data_Transfer {
 			obj.setAlive(x, y);
 	}
 	
+	public static void reset(Console obj) {
+		for (int i = 0; i < obj.rows; i++) {
+			for (int j = 0; j < obj.rows; j++) {
+				obj.setDead(i, j);
+			}
+		}
+	}
+	
+	public static void step(Console obj) {
+		obj.step();
+	}
+	
+	public static void load() {
+	
+	}
+	
+	public static boolean checkInput(char choice) {
+		return choice == 's' || choice == 'S' || choice == '+' || choice == '-' || choice == '[' || choice == ']' || choice == '1' ||
+					   choice == '2' || choice == '3' || choice == 'v' || choice == 'r' || choice == 'n' || choice == 'i';
+	}
+	
 	public void printCommands() {
 		System.out.println(Color.RED + "Instructions To Play Game of Life");
-		System.out.println(Color.YELLOW + "1. " + Color.CYAN + "Press 's' To Start The Game");
-		System.out.println(Color.YELLOW + "2. " + Color.CYAN + "Press 'S' To Stop The Game");
-		System.out.println(Color.YELLOW + "3. " + Color.CYAN + "Press '+' To Speed Up The Game");
-		System.out.println(Color.YELLOW + "4. " + Color.CYAN + "Press '-' To Slow Down The Game");
-		System.out.println(Color.YELLOW + "5. " + Color.CYAN + "Press '[' To Zoom In The Game");
-		System.out.println(Color.YELLOW + "6. " + Color.CYAN + "Press ']' To Zoom Out The Game");
-		System.out.println(Color.YELLOW + "7. " + Color.CYAN + "Press '1' To Save The State");
-		System.out.println(Color.YELLOW + "8. " + Color.CYAN + "Press '2' To Load The State");
-		System.out.println(Color.YELLOW + "9. " + Color.CYAN + "Press '3' To Delete The State");
-		System.out.println(Color.YELLOW + "10. " + Color.CYAN + "Press 'v' To View States");
-		System.out.println(Color.YELLOW + "11. " + Color.CYAN + "Press ']' To Reset The State");
-		System.out.println(Color.YELLOW + "12. " + Color.CYAN + "Press 'n' To Move To The Next State");
-		System.out.println(Color.YELLOW + "13. " + Color.CYAN + "Press 'i' To Take Input");
+		System.out.println(Color.YELLOW + "1. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "s" + Color.MAGENTA + "' " + Color.CYAN + "To Start The Game");
+		System.out.println(Color.YELLOW + "2. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "S" + Color.MAGENTA + "' " + Color.CYAN + "To Stop The Game");
+		System.out.println(Color.YELLOW + "3. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "+" + Color.MAGENTA + "' " + Color.CYAN + "To Speed Up The Game");
+		System.out.println(Color.YELLOW + "4. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "-" + Color.MAGENTA + "' " + Color.CYAN + "To Slow Down The Game");
+		System.out.println(Color.YELLOW + "5. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "[" + Color.MAGENTA + "' " + Color.CYAN + "To Zoom In The Game");
+		System.out.println(Color.YELLOW + "6. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "]" + Color.MAGENTA + "' " + Color.CYAN + "To Zoom Out The Game");
+		System.out.println(Color.YELLOW + "7. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "1" + Color.MAGENTA + "' " + Color.CYAN + "To Save The State");
+		System.out.println(Color.YELLOW + "8. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "2" + Color.MAGENTA + "' " + Color.CYAN + "To Load The State");
+		System.out.println(Color.YELLOW + "9. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "3" + Color.MAGENTA + "' " + Color.CYAN + "To Delete The State");
+		System.out.println(Color.YELLOW + "10. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "v" + Color.MAGENTA + "' " + Color.CYAN + "To View States");
+		System.out.println(Color.YELLOW + "11. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "r" + Color.MAGENTA + "' " + Color.CYAN + "To Reset The State");
+		System.out.println(Color.YELLOW + "12. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "n" + Color.MAGENTA + "' " + Color.CYAN + "To Move To The Next State");
+		System.out.println(Color.YELLOW + "13. " + Color.CYAN + "Press" + Color.MAGENTA + " '" + Color.BLUE + "i" + Color.MAGENTA + "' " + Color.CYAN + "To Take Input");
+		
 		
 		System.out.print(Color.GREEN + "\nYour Choice: ");
 	}
@@ -120,7 +148,10 @@ public class Console implements UI_To_BL_Data_Transfer {
 		System.out.print("\t");
 		for (int j = 0; j < columns; j++) {
 			System.out.print(Color.CYAN);
-			System.out.print(j + "\t");
+			System.out.print(j);
+			for (int k = 0; k < (getZoomFactor() / 100); k++) {
+				System.out.print("\t");
+			}
 		}
 		System.out.println();
 		
@@ -139,66 +170,68 @@ public class Console implements UI_To_BL_Data_Transfer {
 					System.out.print("\t");
 				}
 			}
-			System.out.println();
+			for (int j = 0; j < (getZoomFactor() / 100); j++) {
+				System.out.println();
+			}
 		}
 		
 		System.out.print(Color.WHITE);
-		System.out.println("\n\n\n---------------------------------------------------------");
+		System.out.println("\n---------------------------------------------------------");
 		
 	}
 	
 	@Override
 	public void setAlive(int row, int column) {
-		game.getBoard().setAlive(row, column);
+		this.game.getBoard().setAlive(row, column);
 	}
 	
 	@Override
 	public void setDead(int row, int column) {
-		game.getBoard().setDead(row, column);
+		this.game.getBoard().setDead(row, column);
 	}
 	
 	@Override
 	public boolean getCellStatus(int row, int column) {
-		return game.getBoard().getCell(row, column).isAlive();
+		return this.game.getBoard().getCell(row, column).isAlive();
 	}
 	
 	@Override
 	public void step() {
-		game.getBoard().step();
+		this.game.getBoard().step();
 	}
 	
 	@Override
 	public boolean getPlay() {
-		return game.getControl().getplay();
+		return this.game.getControl().getplay();
 	}
 	
 	@Override
 	public void setPlay(boolean play) {
-		game.getControl().setPlay(play);
+		this.game.getControl().setPlay(play);
 	}
 	
 	@Override
 	public float getZoomFactor() {
-		return game.getControl().getZoomfactor();
+		return this.game.getControl().getZoomfactor();
 	}
 	
 	@Override
 	public void setZoomFactor(float zf) {
-		game.getControl().setSpeedFactor(zf);
+		this.game.getControl().setZoomFactor(zf);
 	}
 	
 	@Override
 	public float getSpeedFactor() {
-		return game.getControl().getSpeedFactor();
+		return this.game.getControl().getSpeedFactor();
 	}
 	
 	@Override
 	public void setSpeedFactor(float sf) {
-		game.getControl().setSpeedFactor(sf);
+		this.game.getControl().setSpeedFactor(sf);
 	}
 	
 	@Override
 	public void StartGame() {
-		game.StartGame();
+		this.game.StartGame();
 	}
 }

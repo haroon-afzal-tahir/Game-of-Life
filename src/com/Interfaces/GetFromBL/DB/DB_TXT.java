@@ -169,7 +169,7 @@ public class DB_TXT implements DB_I {
             //System.out.println(columns);
     
     
-            //ret_gameobj=new Game(rows,columns);
+            ret_gameobj = new Game(rows, columns);
             //generations
             line = bufferedReader.readLine();
             int generations = Integer.parseInt(line);
