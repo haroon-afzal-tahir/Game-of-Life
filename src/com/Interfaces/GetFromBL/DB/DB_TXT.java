@@ -24,17 +24,14 @@ public class DB_TXT implements DB_I {
 
     }
 
-    public void save( Game obj)
-    {
-
+    public void save(Game obj, String filename) {
+    
         String filePath = new File("").getAbsolutePath();
-        File dir = new File(filePath+"/files");
-
-        File[] matches = dir.listFiles(new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                return  name.endsWith(".txt");
+        File dir = new File(filePath + "/files");
+    
+        File[] matches = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".txt");
             }
         }); //checking the number of files in the folder
 
@@ -48,7 +45,7 @@ public class DB_TXT implements DB_I {
         int state= length+1; //Naming Next File to be Saved
         //create a fle with name of state
         try {
-            File myObj = new File(dir,"File"+state+".txt");
+            File myObj = new File(dir, filename + ".txt");
             if (myObj.createNewFile()) {
                 System.out.println("File created: " + myObj.getName());
             } else {
@@ -61,7 +58,7 @@ public class DB_TXT implements DB_I {
 
         //write in the file state.txt
         try {
-            FileWriter wFile = new FileWriter(new File(dir,"File"+state +".txt"));
+            FileWriter wFile = new FileWriter(new File(dir, filename + ".txt"));
             File filer;
 
 

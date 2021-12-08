@@ -6,7 +6,7 @@ public interface DB_I {
 	
 	void delete(String StateName);
 	
-	void save(Game obj);
+	void save(Game obj, String filename);
 	
 	String view();
 	

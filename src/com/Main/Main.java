@@ -1,10 +1,6 @@
 package com.Main;
 
 import Colors.Color;
-import com.BL.Game;
-import com.Interfaces.GetFromBL.DB.DB_TXT;
-
-import java.util.Scanner;
 
 
 public class Main {
@@ -35,6 +31,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
+		/*
 		Scanner input = new Scanner(System.in);
 
 		Game game_obj=new Game(8,5);
@@ -65,5 +62,6 @@ public class Main {
 		String statename=inpu.next();
 		game_obj.load(statename);
 		game_obj.printboard();
+		*/
 	}
 }

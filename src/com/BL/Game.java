@@ -80,23 +80,23 @@ public class Game implements Runnable {
     public int getCols() {
         return this.board.getColumns();
     }
-
+    
     public Cell getCell(int i, int j) {
         return this.board.getCell(i, j);
     }
-
+    
     public void attachBoard(Board board) {
         this.board = board;
     }
-
-    public void save() {
-        DB_Listener.save(this);
+    
+    public void save(String filename) {
+        DB_Listener.save(this, filename);
     }
-
+    
     public String view() {
         return DB_Listener.view();
     }
-
+    
     public void load(String statename) {
         Game ret_obj = DB_Listener.load(statename);
         this.board = ret_obj.board;

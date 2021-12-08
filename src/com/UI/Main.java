@@ -4,7 +4,7 @@ package com.UI;
 import com.BL.Game;
 import com.FactoryImplementation.Factory;
 import com.Interfaces.DB_I;
-import com.Interfaces.GetFromBL.DB.DB_TXT;
+import com.Interfaces.GetFromBL.DB.DB_SQL;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -475,7 +475,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         Submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.save();
+                game.save(textField.getText());
                 list.setItems(UpdateList());
             }
         });
@@ -534,7 +534,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         primaryStage.setTitle("Game Of Life");
         primaryStage.getIcons().add(new Image("com/Images/Icon.png"));
     
-        DB_I test = new DB_TXT();
+        DB_I test = new DB_SQL();
         game.attachDB(test);
     
         factory.setUI(this);

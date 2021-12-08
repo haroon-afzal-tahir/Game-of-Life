@@ -69,7 +69,9 @@ public class Console implements UI_To_BL_Data_Transfer {
 					}
 					break;
 				case '1':
-					save(obj);
+					System.out.print(Color.BLUE + "Enter State Name: ");
+					String filename = input.nextLine();
+					save(obj, filename);
 					break;
 				case '2':
 					load(obj);
@@ -142,8 +144,8 @@ public class Console implements UI_To_BL_Data_Transfer {
 		obj.step();
 	}
 	
-	public static void save(Console obj) {
-		obj.game.save();
+	public static void save(Console obj, String filename) {
+		obj.game.save(filename);
 	}
 	
 	public static boolean checkInput(char choice) {
