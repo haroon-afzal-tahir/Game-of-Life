@@ -11,24 +11,6 @@ public class DB_SQL implements DB_I {
 	String username = "root";
 	String password = "zxasqw123edc";
 	
-	/*
-	public static void main(String[] args) throws SQLException {
-		try {
-			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gameoflife", "root", "zxasqw123edc");
-			Statement statement = connection.createStatement();
-			
-			ResultSet resultSet = statement.executeQuery("select * from state");
-			
-			while (resultSet.next()) {
-				System.out.println(resultSet.getString("StateName"));
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	
-	}
-	*/
 	@Override
 	public void delete(String StateName) {
 		try {
@@ -54,17 +36,17 @@ public class DB_SQL implements DB_I {
 			String SQL4 = "INSERT INTO cell(StateName, rownum, columnnum) VALUES (?, ?, ?)";
 			
 			PreparedStatement statement = connection.prepareStatement(SQL1);
-			statement.setString(1, filename);
+			statement.setString(1, filename + ".txt");
 			statement.executeUpdate();
 			
 			statement = connection.prepareStatement(SQL2);
-			statement.setString(1, filename);
+			statement.setString(1, filename + ".txt");
 			statement.setInt(2, obj.getBoard().getRows());
 			statement.setInt(3, obj.getCols());
 			statement.executeUpdate();
 			
 			statement = connection.prepareStatement(SQL3);
-			statement.setString(1, filename);
+			statement.setString(1, filename + ".txt");
 			statement.setInt(2, obj.getgenerations());
 			statement.setInt(3, (int) obj.getControl().getSpeedFactor());
 			statement.executeUpdate();
@@ -73,7 +55,7 @@ public class DB_SQL implements DB_I {
 				for (int j = 0; j < obj.getBoard().getColumns(); j++) {
 					if (obj.getBoard().getCell(i, j).isAlive()) {
 						statement = connection.prepareStatement(SQL4);
-						statement.setString(1, filename);
+						statement.setString(1, filename + ".txt");
 						statement.setInt(2, obj.getBoard().getCell(i, j).getX());
 						statement.setInt(3, obj.getBoard().getCell(i, j).getY());
 						statement.executeUpdate();
@@ -90,7 +72,7 @@ public class DB_SQL implements DB_I {
 		String result = "";
 		
 		try {
-			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gameoflife", "root", "zxasqw123edc");
+			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 			Statement statement = connection.createStatement();
 			
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM state");
@@ -98,6 +80,7 @@ public class DB_SQL implements DB_I {
 			while (resultSet.next()) {
 				result = result + resultSet.getString("StateName") + "\n";
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,7 +92,7 @@ public class DB_SQL implements DB_I {
 	public Game load(String stateName) {
 		Game obj = new Game(20, 75);
 		try {
-			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gameoflife", "root", "zxasqw123edc");
+			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 			Statement statement = connection.createStatement();
 			
 			ResultSet resultSet = statement.executeQuery("SELECT rownum, columnnum FROM cell ");

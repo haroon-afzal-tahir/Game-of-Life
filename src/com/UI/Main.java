@@ -26,13 +26,13 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class Main extends Application implements UI_To_BL_Data_Transfer {
-    ListView<String> list = new ListView<String>();
+    ListView<String> deletelist = new ListView<String>();
+    ListView<String> loadlist = new ListView<String>();
     
     Button start = new Button("Start");
     Button stop = new Button("Stop");
     Button next = new Button("Next");
     Button reset = new Button("Reset");
-    Button lexicon = new Button("Lexicon");
     Button manage = new Button("Manage");
     Button save = new Button("Save State");
     Button load = new Button("Load State");
@@ -41,8 +41,6 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
     Button deleteState = new Button("Delete State");
     Button loadState = new Button("Load State");
     
-    Button loadLexicon = new Button("Load Lexicon");
-    
     Button Submit = new Button("Submit");
     
     Slider Zoom = new Slider(0, 10, 0.5);
@@ -50,7 +48,6 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
     
     Stage loadStates = new Stage();
     Stage manageStates = new Stage();
-    Stage lexiconStates = new Stage();
     Stage saveState = new Stage();
     Stage deleteStates = new Stage();
     
@@ -89,9 +86,11 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
             for (int j = 0; temp.charAt(index) != '\n' && temp.charAt(index) != '\0'; j++) {
                 test += temp.charAt(index++);
             }
-            test = test.substring(0, test.length() - 4);
-            list[i] = test;
-            index++;
+            if (test.length() > 4) {
+                test = test.substring(0, test.length() - 4);
+                list[i] = test;
+                index++;
+            }
         }
         return list;
     }
@@ -128,7 +127,6 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         stop.setMinWidth(100);
         next.setMinWidth(100);
         reset.setMinWidth(100);
-        lexicon.setMinWidth(100);
         manage.setMinWidth(100);
     
         start.getStyleClass().removeAll();
@@ -143,16 +141,6 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         reset.getStyleClass().removeAll();
         reset.getStyleClass().add("SimpleButton");
     
-        lexicon.getStyleClass().removeAll();
-        lexicon.getStyleClass().add("SimpleButton");
-        lexicon.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                setPlay(false);
-                lexiconStates.show();
-            }
-        });
-    
         manage.getStyleClass().removeAll();
         manage.getStyleClass().add("SimpleButton");
         manage.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -162,39 +150,42 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
                 manageStates.show();
             }
         });
-
-
+    
+    
         // GridPane Declaration
         GridPane gridPane = new GridPane();
-
+    
         GridPane zoomIcon = new GridPane();
         GridPane speedIcon = new GridPane();
-
+    
         zoomIcon.add(new ImageView("com/Images/zoom.png"), 0, 0);
+        zoomIcon.add(Zoom, 1, 0);
         speedIcon.add(new ImageView("com/Images/speed.png"), 0, 0);
+        speedIcon.add(Speed, 1, 0);
+    
         zoomIcon.setAlignment(Pos.TOP_RIGHT);
         speedIcon.setAlignment(Pos.TOP_RIGHT);
-
+    
+    
         // Adding Buttons in GridPane
         gridPane.add(start, 0, 0);
         gridPane.add(stop, 1, 0);
         gridPane.add(next, 2, 0);
         gridPane.add(reset, 3, 0);
-        gridPane.add(lexicon, 4, 0);
-        gridPane.add(manage, 5, 0);
-        gridPane.add(zoomIcon, 0, 1, 1, 1);
-        gridPane.add(Zoom, 1, 1, 2, 1);
-        gridPane.add(speedIcon, 3, 1, 1, 1);
-        gridPane.add(Speed, 4, 1, 2, 1);
-
+        gridPane.add(manage, 4, 0);
+        gridPane.add(zoomIcon, 0, 1, 2, 1);
+        //gridPane.add(Zoom, 1, 1, 2, 1);
+        gridPane.add(speedIcon, 2, 1, 2, 1);
+        //gridPane.add(Speed, 3, 1, 2, 1);
+    
         // Setting Horizontal Gap Between Buttons
         gridPane.setHgap(20);
         gridPane.setVgap(20);
-
+    
         // Setting Alignment and Padding of GridPane
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setPadding(new Insets(20));
-
+    
         return gridPane;
     }
 
@@ -396,61 +387,34 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         deleteState.getStyleClass().removeAll();
         deleteState.getStyleClass().add("SimpleButton");
     
-        ListView<String> list = new ListView<String>();
-    
-        list.setItems(UpdateList());
-    
         loadState.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.load(list.getSelectionModel().getSelectedItem());
+                game.load(loadlist.getSelectionModel().getSelectedItem());
                 UpdateBoard();
                 setZoomFactor(0);
+                loadStates.close();
+                manageStates.close();
             }
         });
         deleteState.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.delete(list.getSelectionModel().getSelectedItem());
-                list.setItems(UpdateList());
+                game.delete(loadlist.getSelectionModel().getSelectedItem() + ".txt");
+                loadlist.setItems(UpdateList());
+                deletelist.setItems(UpdateList());
+                loadStates.close();
+                manageStates.close();
             }
         });
     
-        gridPane.add(list, 0, 0, 1, 3);
+        loadlist.setItems(UpdateList());
+    
+        gridPane.add(loadlist, 0, 0, 1, 3);
     
         gridPane.add(loadState, 1, 0);
     
         gridPane.add(deleteState, 1, 1);
-    
-        gridPane.setHgap(20);
-        gridPane.setVgap(20);
-    
-        gridPane.setPadding(new Insets(30));
-        gridPane.setStyle("-fx-background-color: #484a49");
-    
-        return gridPane;
-    }
-    
-    public GridPane LexiconStates() {
-        GridPane gridPane = new GridPane();
-        
-        loadLexicon.setMinWidth(100);
-        
-        loadLexicon.getStyleClass().removeAll();
-        loadLexicon.getStyleClass().add("SimpleButton");
-        
-        ListView<String> list = new ListView<String>();
-        
-        ObservableList<String> items = FXCollections.observableArrayList(
-                "Lexicon 1", "Lexicon 2", "Lexicon 3", "Lexicon 4", "Lexicon 5"
-        );
-        
-        
-        list.setItems(items);
-        
-        gridPane.add(list, 0, 0, 1, 3);
-        
-        gridPane.add(loadLexicon, 1, 0);
     
         gridPane.setHgap(20);
         gridPane.setVgap(20);
@@ -476,7 +440,10 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 game.save(textField.getText());
-                list.setItems(UpdateList());
+                loadlist.setItems(UpdateList());
+                deletelist.setItems(UpdateList());
+                saveState.close();
+                manageStates.close();
             }
         });
     
@@ -506,17 +473,21 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         deleteSave.getStyleClass().add("SimpleButton");
     
     
-        list.setItems(UpdateList());
+        deletelist.setItems(UpdateList());
+        loadlist.setItems(UpdateList());
     
         deleteSave.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.delete(list.getSelectionModel().getSelectedItem());
-                list.setItems(UpdateList());
+                game.delete(deletelist.getSelectionModel().getSelectedItem() + ".txt");
+                deletelist.setItems(UpdateList());
+                loadlist.setItems(UpdateList());
+                deleteStates.close();
+                manageStates.close();
             }
         });
     
-        gridPane.add(list, 0, 0, 1, 3);
+        gridPane.add(deletelist, 0, 0, 1, 3);
     
         gridPane.add(deleteSave, 1, 0);
     
@@ -534,6 +505,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         primaryStage.setTitle("Game Of Life");
         primaryStage.getIcons().add(new Image("com/Images/Icon.png"));
     
+    
         DB_I test = new DB_SQL();
         game.attachDB(test);
     
@@ -542,14 +514,12 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
         Scene manageState = new Scene(ManageGridPane(), 500, 200);
         Scene viewStates = new Scene(ViewStates(), 400, 200);
-        Scene lexiconScene = new Scene(LexiconStates(), 400, 200);
         Scene saveStates = new Scene(SavesState(), 400, 200);
         Scene deleteState = new Scene(DeleteState(), 400, 200);
         
         scene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         manageState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         viewStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
-        lexiconScene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         saveStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         deleteState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
         
@@ -559,18 +529,19 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         
         manageStates.setTitle("Manage States");
         manageStates.setScene(manageState);
+        manageStates.getIcons().add(new Image("com/Images/Icon.png"));
         
         loadStates.setTitle("All States");
         loadStates.setScene(viewStates);
-        
-        lexiconStates.setTitle("Lexicons");
-        lexiconStates.setScene(lexiconScene);
+        loadStates.getIcons().add(new Image("com/Images/Icon.png"));
         
         saveState.setTitle("Save A State");
         saveState.setScene(saveStates);
+        saveState.getIcons().add(new Image("com/Images/Icon.png"));
         
         deleteStates.setTitle("Delete A State");
         deleteStates.setScene(deleteState);
+        deleteStates.getIcons().add(new Image("com/Images/Icon.png"));
     }
     
     @Override
