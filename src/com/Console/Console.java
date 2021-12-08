@@ -3,6 +3,8 @@ package com.Console;
 import Colors.Color;
 import com.BL.Game;
 import com.FactoryImplementation.Factory;
+import com.Interfaces.DB_I;
+import com.Interfaces.GetFromBL.DB.DB_TXT;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
 
 import java.util.Scanner;
@@ -25,17 +27,19 @@ public class Console implements UI_To_BL_Data_Transfer {
 	
 	public static void main(String[] args) {
 		Factory factory = new Factory();
-		Console obj = new Console(10, 10, factory);
+		Console obj = new Console(20, 75, factory);
 		factory.setConsole(obj);
 		obj.setZoomFactor(100);
-		obj.setSpeedFactor(0.2f);
+		obj.setSpeedFactor(0.15f);
+		DB_I test = new DB_TXT();
+		obj.game.attachDB(test);
 		
 		char choice = 's';
 		while (checkInput(choice)) {
 			obj.print();
 			obj.printCommands();
 			choice = input.next().charAt(0);
-			
+			System.out.print(Color.RESET);
 			switch (choice) {
 				case 's':
 					obj.setPlay(true);
@@ -45,12 +49,12 @@ public class Console implements UI_To_BL_Data_Transfer {
 					obj.setPlay(false);
 					break;
 				case '+':
-					if (obj.getSpeedFactor() < 0.3f) {
+					if (obj.getSpeedFactor() < 0.25f) {
 						obj.setSpeedFactor((float) (obj.getSpeedFactor() + 0.01));
 					}
 					break;
 				case '-':
-					if (obj.getSpeedFactor() > 0.2f) {
+					if (obj.getSpeedFactor() > 0.15f) {
 						obj.setSpeedFactor((float) (obj.getSpeedFactor() - 0.01));
 					}
 					break;
@@ -65,12 +69,18 @@ public class Console implements UI_To_BL_Data_Transfer {
 					}
 					break;
 				case '1':
+					save(obj);
 					break;
 				case '2':
+					load(obj);
+					obj.setZoomFactor(100);
+					obj.setSpeedFactor(0.15f);
 					break;
 				case '3':
+					delete(obj);
 					break;
 				case 'v':
+					view(obj);
 					break;
 				case 'r':
 					reset(obj);
@@ -87,6 +97,25 @@ public class Console implements UI_To_BL_Data_Transfer {
 			}
 		}
 		
+	}
+	
+	public static void load(Console obj) {
+		System.out.println(view(obj));
+		System.out.print("Enter State Name To Load: ");
+		String temp;
+		temp = input.next();
+		obj.game.load(temp);
+	}
+	
+	public static void delete(Console obj) {
+		System.out.println(Color.CYAN + view(obj));
+		System.out.print(Color.GREEN + "Enter Which State You Want To Delete: " + Color.RESET);
+		String temp = input.next();
+		obj.game.delete(temp);
+	}
+	
+	public static String view(Console obj) {
+		return obj.game.view();
 	}
 	
 	public static void input(Console obj) {
@@ -113,8 +142,8 @@ public class Console implements UI_To_BL_Data_Transfer {
 		obj.step();
 	}
 	
-	public static void load() {
-	
+	public static void save(Console obj) {
+		obj.game.save();
 	}
 	
 	public static boolean checkInput(char choice) {

@@ -3,6 +3,8 @@ package com.UI;
 
 import com.BL.Game;
 import com.FactoryImplementation.Factory;
+import com.Interfaces.DB_I;
+import com.Interfaces.GetFromBL.DB.DB_TXT;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -12,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -23,6 +26,7 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class Main extends Application implements UI_To_BL_Data_Transfer {
+    ListView<String> list = new ListView<String>();
     
     Button start = new Button("Start");
     Button stop = new Button("Stop");
@@ -58,6 +62,38 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
     
     public static void main(String[] args) {
         launch(args);
+    }
+    
+    public ObservableList<String> UpdateList() {
+        String[] List = GetStates();
+        
+        ObservableList<String> items = FXCollections.observableArrayList();
+        for (int i = 0; i < List.length; i++) {
+            items.add(List[i]);
+        }
+        return items;
+    }
+    
+    public String[] GetStates() {
+        String temp = game.view();
+        int count = 0;
+        for (int i = 0; i < temp.length(); i++) {
+            if (temp.charAt(i) == '\n') {
+                count++;
+            }
+        }
+        String[] list = new String[count];
+        int index = 0;
+        for (int i = 0; i < count; i++) {
+            String test = "";
+            for (int j = 0; temp.charAt(index) != '\n' && temp.charAt(index) != '\0'; j++) {
+                test += temp.charAt(index++);
+            }
+            test = test.substring(0, test.length() - 4);
+            list[i] = test;
+            index++;
+        }
+        return list;
     }
     
     public void UpdateBoard() {
@@ -211,10 +247,6 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         setPlay(true);
-                        //if (startBtn.isAlive() == false) {
-                        //startBtn = new Thread(Main.this);
-                        //startBtn.start();
-                        //}
                         StartGame();
                     }
                 });
@@ -354,28 +386,38 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
 
     public GridPane ViewStates() {
         GridPane gridPane = new GridPane();
-
+    
         loadState.setMinWidth(100);
         deleteState.setMinWidth(100);
-
+    
         loadState.getStyleClass().removeAll();
         loadState.getStyleClass().add("SimpleButton");
-
+    
         deleteState.getStyleClass().removeAll();
         deleteState.getStyleClass().add("SimpleButton");
-
+    
         ListView<String> list = new ListView<String>();
-
-        ObservableList<String> items = FXCollections.observableArrayList(
-                "State 1", "State 2", "State 3", "State 4", "State 5"
-        );
-
-
-
-        list.setItems(items);
-
-        gridPane.add(list, 0 , 0, 1, 3);
-
+    
+        list.setItems(UpdateList());
+    
+        loadState.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                game.load(list.getSelectionModel().getSelectedItem());
+                UpdateBoard();
+                setZoomFactor(0);
+            }
+        });
+        deleteState.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                game.delete(list.getSelectionModel().getSelectedItem());
+                list.setItems(UpdateList());
+            }
+        });
+    
+        gridPane.add(list, 0, 0, 1, 3);
+    
         gridPane.add(loadState, 1, 0);
     
         gridPane.add(deleteState, 1, 1);
@@ -421,23 +463,32 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
     
     public GridPane SavesState() {
         GridPane gridPane = new GridPane();
-        
+    
         Label label = new Label("Enter State Name:");
         label.setTextFill(Color.WHITE);
         TextField textField = new TextField();
-        
+    
         Submit.setMinWidth(100);
         Submit.getStyleClass().removeAll();
         Submit.getStyleClass().add("SimpleButton");
-        
+    
+        Submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                game.save();
+                list.setItems(UpdateList());
+            }
+        });
+    
+    
         gridPane.add(label, 0, 0);
         gridPane.add(textField, 0, 1);
         gridPane.add(Submit, 0, 2);
-        
+    
         gridPane.setAlignment(Pos.CENTER);
-        
+    
         gridPane.setVgap(20);
-        
+    
         gridPane.setPadding(new Insets(30));
         gridPane.setStyle("-fx-background-color: #484a49");
         
@@ -446,29 +497,32 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
     
     public GridPane DeleteState() {
         GridPane gridPane = new GridPane();
-        
+    
         Button deleteSave = new Button("Delete State");
-        
+    
         deleteSave.setMinWidth(100);
-        
+    
         deleteSave.getStyleClass().removeAll();
         deleteSave.getStyleClass().add("SimpleButton");
-        
-        ListView<String> list = new ListView<String>();
-        
-        ObservableList<String> items = FXCollections.observableArrayList(
-                "State 1", "State 2", "State 3", "State 4", "State 5"
-        );
-        
-        list.setItems(items);
-        
+    
+    
+        list.setItems(UpdateList());
+    
+        deleteSave.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                game.delete(list.getSelectionModel().getSelectedItem());
+                list.setItems(UpdateList());
+            }
+        });
+    
         gridPane.add(list, 0, 0, 1, 3);
-        
+    
         gridPane.add(deleteSave, 1, 0);
-        
+    
         gridPane.setHgap(20);
         gridPane.setVgap(20);
-        
+    
         gridPane.setPadding(new Insets(30));
         gridPane.setStyle("-fx-background-color: #484a49");
         
@@ -478,9 +532,13 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Game Of Life");
-        
+        primaryStage.getIcons().add(new Image("com/Images/Icon.png"));
+    
+        DB_I test = new DB_TXT();
+        game.attachDB(test);
+    
         factory.setUI(this);
-        
+    
         Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
         Scene manageState = new Scene(ManageGridPane(), 500, 200);
         Scene viewStates = new Scene(ViewStates(), 400, 200);

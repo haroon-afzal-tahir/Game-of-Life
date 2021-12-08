@@ -188,12 +188,12 @@ public class DB_TXT implements DB_I {
                 //row number of a cell
                 line = bufferedReader.readLine();
                 x = Integer.parseInt(line);
-                System.out.println(x);
+                //System.out.println(x);
 
                 //column number of a cell
                 line = bufferedReader.readLine();
                 y = Integer.parseInt(line);
-                System.out.println(y);
+                //System.out.println(y);
                 if(x!=-1 && y!=-1)
                     ret_gameobj.getBoard().setCell(x, y);
             }

@@ -98,7 +98,7 @@ public class Game implements Runnable {
     }
 
     public void load(String statename) {
-       Game ret_obj= DB_Listener.load(statename);
+        Game ret_obj = DB_Listener.load(statename);
         this.board = ret_obj.board;
         this.controls = ret_obj.controls;
         this.generations = ret_obj.generations;
