@@ -69,7 +69,11 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 					break;
 				case '1':
 					System.out.print(Color.BLUE + "Enter State Name: ");
-					String filename = input.nextLine();
+					String filename = "";
+					while (filename == "") {
+						filename = input.next();
+					}
+					
 					save(obj, filename);
 					break;
 				case '2':
@@ -192,7 +196,7 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 			
 			for (int j = 0; j < obj.columns; j++) {
 				if (getCellStatus(i, j)) {
-					System.out.print(Color.RED);
+					System.out.print(Color.YELLOW);
 				} else {
 					System.out.print(Color.WHITE);
 				}
