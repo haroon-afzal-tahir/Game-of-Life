@@ -1,4 +1,4 @@
-package com.Interfaces;
+package com.Interfaces.SetToBL;
 
 import com.BL.Game;
 

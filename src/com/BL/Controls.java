@@ -3,15 +3,17 @@ package com.BL;
 public class Controls {
 	private float zoomFactor;
 	private float speedFactor;
-
+	private int generations;
+	
 	private boolean Play = true;
 	private int score;
 	
 	public Controls(float zm, float sf, boolean p) {
 		this.zoomFactor = zm;
-
+		
 		this.Play = p;
 		this.speedFactor = sf;
+		generations = 0;
 	}
 	
 	public void setZoomFactor(float zm) {
@@ -44,5 +46,13 @@ public class Controls {
 	
 	public void setScore(int score) {
 		this.score = score;
+	}
+	
+	public int getGenerations() {
+		return generations;
+	}
+	
+	public void setGenerations(int generations) {
+		this.generations = generations;
 	}
 }

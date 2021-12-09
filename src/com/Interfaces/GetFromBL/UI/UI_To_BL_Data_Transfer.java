@@ -22,4 +22,8 @@ public interface UI_To_BL_Data_Transfer {
 	void setSpeedFactor(float sf);
 	
 	void StartGame();
+	
+	void SetGenerations(int generations);
+	
+	int GetGenerations();
 }

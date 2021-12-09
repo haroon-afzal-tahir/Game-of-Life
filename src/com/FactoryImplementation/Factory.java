@@ -1,6 +1,6 @@
 package com.FactoryImplementation;
 
-import com.Console.Console;
+import com.UI.Console;
 import com.UI.Main;
 
 public class Factory {

@@ -1,8 +1,8 @@
-package com.Interfaces.GetFromBL.DB;
+package com.InterfaceImplementation.GetFromBL;
 
 
 import com.BL.Game;
-import com.Interfaces.DB_I;
+import com.Interfaces.SetToBL.DB_I;
 
 import java.sql.*;
 
@@ -99,10 +99,15 @@ public class DB_SQL implements DB_I {
 			while (resultSet.next())
 				obj.getBoard().setCell(Integer.parseInt(resultSet.getString("rownum")), Integer.parseInt(resultSet.getString("columnnum")));
 			
-			resultSet = statement.executeQuery("SELECT speed, generations FROM controls WHERE StateName=?");
-			while (resultSet.next())
+			String SQL = "SELECT Speed, Generations FROM controls WHERE StateName=?";
+			//resultSet = statement.executeQuery("SELECT speed, generations FROM controls WHERE StateName=?");
+			PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setString(1, stateName);
+			resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
 				obj.getControl().setSpeedFactor(Integer.parseInt(resultSet.getString("speed")));
-			obj.getControl().setScore(Integer.parseInt(resultSet.getString("generations")));
+				obj.getControl().setScore(Integer.parseInt(resultSet.getString("generations")));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

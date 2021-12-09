@@ -1,7 +1,7 @@
-package com.Interfaces.GetFromBL.DB;
+package com.InterfaceImplementation.GetFromBL;
 
 import com.BL.Game;
-import com.Interfaces.DB_I;
+import com.Interfaces.SetToBL.DB_I;
 
 import java.io.*;
 

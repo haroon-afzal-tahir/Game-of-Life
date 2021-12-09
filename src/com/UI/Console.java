@@ -1,16 +1,16 @@
-package com.Console;
+package com.UI;
 
 import Colors.Color;
 import com.BL.Game;
 import com.FactoryImplementation.Factory;
-import com.Interfaces.DB_I;
-import com.Interfaces.GetFromBL.DB.DB_TXT;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
+import com.Interfaces.SetToBL.DB_I;
+import com.Interfaces.SetToBL.UI_I;
 
 import java.util.Scanner;
 
 
-public class Console implements UI_To_BL_Data_Transfer {
+public class Console implements UI_To_BL_Data_Transfer, UI_I {
 	int rows = 20, columns = 75;
 	Factory factory;
 	Game game;
@@ -25,18 +25,17 @@ public class Console implements UI_To_BL_Data_Transfer {
 		game = new Game(this.rows, this.columns, this.factory);
 	}
 	
-	public static void main(String[] args) {
+	public static void main(DB_I test) {
 		Factory factory = new Factory();
 		Console obj = new Console(20, 75, factory);
 		factory.setConsole(obj);
 		obj.setZoomFactor(100);
 		obj.setSpeedFactor(0.15f);
-		DB_I test = new DB_TXT();
 		obj.game.attachDB(test);
 		
 		char choice = 's';
 		while (checkInput(choice)) {
-			obj.print();
+			obj.print(obj);
 			obj.printCommands();
 			choice = input.next().charAt(0);
 			System.out.print(Color.RESET);
@@ -82,7 +81,7 @@ public class Console implements UI_To_BL_Data_Transfer {
 					delete(obj);
 					break;
 				case 'v':
-					view(obj);
+					System.out.println(view(obj));
 					break;
 				case 'r':
 					reset(obj);
@@ -94,11 +93,10 @@ public class Console implements UI_To_BL_Data_Transfer {
 					input(obj);
 					break;
 				default:
-					obj.print();
+					obj.print(obj);
 					break;
 			}
 		}
-		
 	}
 	
 	public static void load(Console obj) {
@@ -134,14 +132,16 @@ public class Console implements UI_To_BL_Data_Transfer {
 	
 	public static void reset(Console obj) {
 		for (int i = 0; i < obj.rows; i++) {
-			for (int j = 0; j < obj.rows; j++) {
+			for (int j = 0; j < obj.columns; j++) {
 				obj.setDead(i, j);
 			}
 		}
+		obj.SetGenerations(0);
 	}
 	
 	public static void step(Console obj) {
 		obj.step();
+		obj.SetGenerations(obj.GetGenerations() + 1);
 	}
 	
 	public static void save(Console obj, String filename) {
@@ -173,41 +173,41 @@ public class Console implements UI_To_BL_Data_Transfer {
 		System.out.print(Color.GREEN + "\nYour Choice: ");
 	}
 	
-	public void print() {
+	public void print(Console obj) {
 		System.out.println();
 		
 		System.out.print("\t");
-		for (int j = 0; j < columns; j++) {
+		for (int j = 0; j < obj.columns; j++) {
 			System.out.print(Color.CYAN);
 			System.out.print(j);
-			for (int k = 0; k < (getZoomFactor() / 100); k++) {
+			for (int k = 0; k < (obj.getZoomFactor() / 100); k++) {
 				System.out.print("\t");
 			}
 		}
 		System.out.println();
 		
-		for (int i = 0; i < rows; i++) {
+		for (int i = 0; i < obj.rows; i++) {
 			System.out.print(Color.CYAN);
 			System.out.print(i + "\t");
 			
-			for (int j = 0; j < columns; j++) {
+			for (int j = 0; j < obj.columns; j++) {
 				if (getCellStatus(i, j)) {
 					System.out.print(Color.RED);
 				} else {
 					System.out.print(Color.WHITE);
 				}
 				System.out.print((char) 0x25A0);
-				for (int k = 0; k < (getZoomFactor() / 100); k++) {
+				for (int k = 0; k < (obj.getZoomFactor() / 100); k++) {
 					System.out.print("\t");
 				}
 			}
-			for (int j = 0; j < (getZoomFactor() / 100); j++) {
+			for (int j = 0; j < (obj.getZoomFactor() / 100); j++) {
 				System.out.println();
 			}
 		}
 		
 		System.out.print(Color.WHITE);
-		System.out.println("\n---------------------------------------------------------");
+		System.out.println("\nGenerations: " + obj.GetGenerations() + "\n---------------------------------------------------------");
 		
 	}
 	
@@ -264,5 +264,15 @@ public class Console implements UI_To_BL_Data_Transfer {
 	@Override
 	public void StartGame() {
 		this.game.StartGame();
+	}
+	
+	@Override
+	public void SetGenerations(int generations) {
+		this.game.getControl().setGenerations(generations);
+	}
+	
+	@Override
+	public int GetGenerations() {
+		return this.game.getControl().getGenerations();
 	}
 }

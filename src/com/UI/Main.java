@@ -3,9 +3,9 @@ package com.UI;
 
 import com.BL.Game;
 import com.FactoryImplementation.Factory;
-import com.Interfaces.DB_I;
-import com.Interfaces.GetFromBL.DB.DB_SQL;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
+import com.Interfaces.SetToBL.DB_I;
+import com.Interfaces.SetToBL.UI_I;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,9 +25,11 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class Main extends Application implements UI_To_BL_Data_Transfer {
+public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     ListView<String> deletelist = new ListView<String>();
     ListView<String> loadlist = new ListView<String>();
+    
+    Label Counter = new Label("0");
     
     Button start = new Button("Start");
     Button stop = new Button("Stop");
@@ -56,6 +58,13 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
     
     Factory factory = new Factory();
     private Game game = new Game(rows, columns, factory);
+    
+    public Main(DB_I obj) throws Exception {
+        game = new Game(rows, columns, factory);
+        game.attachDB(obj);
+        SetGenerations(0);
+        start(new Stage());
+    }
     
     public static void main(String[] args) {
         launch(args);
@@ -107,9 +116,13 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
                 }
             }
         }
+        SetGenerations(GetGenerations() + 1);
+        Counter.setText(String.valueOf(GetGenerations()));
     }
 
     public GridPane GetButtons() {
+        Counter.setStyle("-fx-text-fill: #ffffff");
+    
         Zoom.setShowTickMarks(true);
         Zoom.setShowTickLabels(true);
         Zoom.setMajorTickUnit(0.25f);
@@ -177,7 +190,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         //gridPane.add(Zoom, 1, 1, 2, 1);
         gridPane.add(speedIcon, 2, 1, 2, 1);
         //gridPane.add(Speed, 3, 1, 2, 1);
-    
+        gridPane.add(Counter, 8, 0);
         // Setting Horizontal Gap Between Buttons
         gridPane.setHgap(20);
         gridPane.setVgap(20);
@@ -224,6 +237,8 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
                 reset.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
+                        SetGenerations(0);
+                        Counter.setText(String.valueOf(GetGenerations()));
                         for (int i = 0; i < rows; i++) {
                             for (int j = 0; j < columns; j++) {
                                 grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
@@ -393,6 +408,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
                 game.load(loadlist.getSelectionModel().getSelectedItem());
                 UpdateBoard();
                 setZoomFactor(0);
+                setSpeedFactor(1);
                 loadStates.close();
                 manageStates.close();
             }
@@ -505,10 +521,6 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
         primaryStage.setTitle("Game Of Life");
         primaryStage.getIcons().add(new Image("com/Images/Icon.png"));
     
-    
-        DB_I test = new DB_SQL();
-        game.attachDB(test);
-    
         factory.setUI(this);
     
         Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
@@ -597,5 +609,15 @@ public class Main extends Application implements UI_To_BL_Data_Transfer {
     @Override
     public void StartGame() {
         game.StartGame();
+    }
+    
+    @Override
+    public void SetGenerations(int generations) {
+        game.getControl().setGenerations(generations);
+    }
+    
+    @Override
+    public int GetGenerations() {
+        return game.getControl().getGenerations();
     }
 }

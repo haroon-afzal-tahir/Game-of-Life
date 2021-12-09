@@ -1,8 +1,9 @@
 package com.BL;
 
-import com.Console.Console;
 import com.FactoryImplementation.Factory;
-import com.Interfaces.DB_I;
+import com.Interfaces.SetToBL.DB_I;
+import com.Interfaces.SetToBL.UI_I;
+import com.UI.Console;
 import com.UI.Main;
 
 public class Game implements Runnable {
@@ -10,6 +11,7 @@ public class Game implements Runnable {
     private Controls controls;
     private DB_I DB_Listener;
     private int generations;
+    private UI_I UI_Listener;
     
     Factory factory = new Factory();
     
@@ -40,23 +42,27 @@ public class Game implements Runnable {
     public Controls getControl() {
         return controls;
     }
-
+    
     public void setControl(Controls obj) {
         controls = obj;
     }
-
+    
     public void attachDB(DB_I list) {
         this.DB_Listener = list;
     }
-
+    
+    public void attachUI(UI_I list) {
+        this.UI_Listener = list;
+    }
+    
     public int getScore() {
         return controls.getScore();
     }
-
+    
     public void setspeedfactor(float sf) {
         this.controls.setSpeedFactor(sf);
     }
-
+    
     public float getspeedfactor() {
         return this.controls.getSpeedFactor();
     }
@@ -130,8 +136,9 @@ public class Game implements Runnable {
                 UI.UpdateBoard();
             } else {
                 console.step();
-                console.print();
+                console.print(console);
             }
+            setgenerations(getgenerations() + 1);
             try {
                 Thread.sleep((long) (((1 / (getspeedfactor())) * 100000)));
             } catch (InterruptedException e) {
