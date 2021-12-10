@@ -19,6 +19,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -52,6 +54,11 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     Stage manageStates = new Stage();
     Stage saveState = new Stage();
     Stage deleteStates = new Stage();
+    
+    public void PlayMp3(Media media) {
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
+    }
     
     private int rows = 20, columns = 75;
     private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
@@ -105,16 +112,23 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     }
     
     public void UpdateBoard() {
+        boolean isAllDead = true;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (!getCellStatus(i, j)) {
                     grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
                     grid_buttons[i][j].getStyleClass().add("UnselectedButton");
                 } else {
+                    isAllDead = false;
                     grid_buttons[i][j].getStyleClass().removeAll("UnselectedButton");
                     grid_buttons[i][j].getStyleClass().add("SelectedButton");
                 }
             }
+        }
+        if (!isAllDead) {
+            PlayMp3(new Media(new File("src\\com\\Sound\\Game Running.mp3").toURI().toString()));
+        } else {
+            PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
         }
         SetGenerations(GetGenerations() + 1);
         Counter.setText(String.valueOf(GetGenerations()));
@@ -231,6 +245,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                     public void handle(MouseEvent mouseEvent) {
                         step();
                         UpdateBoard();
+                        PlayMp3(new Media(new File("src\\com\\Sound\\Game Running.mp3").toURI().toString()));
                     }
                 });
 
@@ -239,6 +254,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                     public void handle(MouseEvent mouseEvent) {
                         SetGenerations(0);
                         Counter.setText(String.valueOf(GetGenerations()));
+                        PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
                         for (int i = 0; i < rows; i++) {
                             for (int j = 0; j < columns; j++) {
                                 grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
@@ -261,6 +277,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         setPlay(false);
+                        PlayMp3(new Media(new File("src\\com\\Sound\\Stop Press.mp3").toURI().toString()));
                     }
                 });
 
@@ -405,7 +422,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         loadState.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.load(loadlist.getSelectionModel().getSelectedItem());
+                game.load(loadlist.getSelectionModel().getSelectedItem() + ".txt");
                 UpdateBoard();
                 setZoomFactor(0);
                 setSpeedFactor(1);

@@ -104,15 +104,16 @@ public class Final_Main extends Application {
 				
 				
 				if (console.isSelected()) {
+					primaryStage.close();
 					Console.main(db[0]);
 				} else if (JavaFx.isSelected()) {
 					try {
+						primaryStage.close();
 						ui[0] = new Main(db[0]);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
-				primaryStage.close();
 			}
 		});
 	}

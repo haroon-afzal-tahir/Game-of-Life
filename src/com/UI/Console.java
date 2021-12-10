@@ -108,14 +108,14 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 		System.out.print("Enter State Name To Load: ");
 		String temp;
 		temp = input.next();
-		obj.game.load(temp);
+		obj.game.load(temp + ".txt");
 	}
 	
 	public static void delete(Console obj) {
 		System.out.println(Color.CYAN + view(obj));
 		System.out.print(Color.GREEN + "Enter Which State You Want To Delete: " + Color.RESET);
 		String temp = input.next();
-		obj.game.delete(temp);
+		obj.game.delete(temp + ".txt");
 	}
 	
 	public static String view(Console obj) {
@@ -196,7 +196,7 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 			
 			for (int j = 0; j < obj.columns; j++) {
 				if (getCellStatus(i, j)) {
-					System.out.print(Color.YELLOW);
+					System.out.print(Color.RED);
 				} else {
 					System.out.print(Color.WHITE);
 				}

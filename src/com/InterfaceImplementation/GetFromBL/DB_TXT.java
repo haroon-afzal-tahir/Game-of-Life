@@ -146,8 +146,8 @@ public class DB_TXT implements DB_I {
 
         String filePath = new File("").getAbsolutePath();
         File dir = new File(filePath+"/files");
-        Game ret_gameobj=null;
-        String filename = stateName + ".txt";
+        Game ret_gameobj = null;
+        String filename = stateName;
         String line;
         int x = 0, y = 0;
         try {

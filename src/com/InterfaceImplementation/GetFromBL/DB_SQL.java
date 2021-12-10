@@ -33,7 +33,7 @@ public class DB_SQL implements DB_I {
 			String SQL1 = "INSERT INTO state(StateName) VALUES (?)";
 			String SQL2 = "INSERT INTO board(StateName, rowsnum, columnsnum) VALUES (?, ?, ?)";
 			String SQL3 = "INSERT INTO controls VALUES (?, ?, ?)";
-			String SQL4 = "INSERT INTO cell(StateName, rownum, columnnum) VALUES (?, ?, ?)";
+			String SQL4 = "INSERT INTO cell(StateName, ID, rownum, columnnum) VALUES (?, ?, ?, ?)";
 			
 			PreparedStatement statement = connection.prepareStatement(SQL1);
 			statement.setString(1, filename + ".txt");
@@ -42,7 +42,7 @@ public class DB_SQL implements DB_I {
 			statement = connection.prepareStatement(SQL2);
 			statement.setString(1, filename + ".txt");
 			statement.setInt(2, obj.getBoard().getRows());
-			statement.setInt(3, obj.getCols());
+			statement.setInt(3, obj.getBoard().getColumns());
 			statement.executeUpdate();
 			
 			statement = connection.prepareStatement(SQL3);
@@ -50,15 +50,17 @@ public class DB_SQL implements DB_I {
 			statement.setInt(2, obj.getgenerations());
 			statement.setInt(3, (int) obj.getControl().getSpeedFactor());
 			statement.executeUpdate();
-			
+			int id = 1;
 			for (int i = 0; i < obj.getBoard().getRows(); i++) {
 				for (int j = 0; j < obj.getBoard().getColumns(); j++) {
 					if (obj.getBoard().getCell(i, j).isAlive()) {
 						statement = connection.prepareStatement(SQL4);
 						statement.setString(1, filename + ".txt");
-						statement.setInt(2, obj.getBoard().getCell(i, j).getX());
-						statement.setInt(3, obj.getBoard().getCell(i, j).getY());
+						statement.setInt(2, id);
+						statement.setInt(3, obj.getBoard().getCell(i, j).getX());
+						statement.setInt(4, obj.getBoard().getCell(i, j).getY());
 						statement.executeUpdate();
+						id++;
 					}
 				}
 			}
@@ -95,13 +97,18 @@ public class DB_SQL implements DB_I {
 			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 			Statement statement = connection.createStatement();
 			
-			ResultSet resultSet = statement.executeQuery("SELECT rownum, columnnum FROM cell ");
+			
+			PreparedStatement preparedStatement = connection.prepareStatement("SELECT rownum, columnnum FROM cell WHERE StateName=?");
+			preparedStatement.setString(1, stateName);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
 			while (resultSet.next())
 				obj.getBoard().setCell(Integer.parseInt(resultSet.getString("rownum")), Integer.parseInt(resultSet.getString("columnnum")));
 			
 			String SQL = "SELECT Speed, Generations FROM controls WHERE StateName=?";
 			//resultSet = statement.executeQuery("SELECT speed, generations FROM controls WHERE StateName=?");
-			PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement = connection.prepareStatement(SQL);
 			preparedStatement.setString(1, stateName);
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
