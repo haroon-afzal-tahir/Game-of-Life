@@ -23,6 +23,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.json.simple.JSONObject;
 
 import java.io.File;
 
@@ -51,6 +52,8 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     Stage manageStates = new Stage();
     Stage saveState = new Stage();
     Stage deleteStates = new Stage();
+    
+    JSONObject object = new JSONObject();
     
     public void PlayMp3(Media media) {
         MediaPlayer mediaPlayer = new MediaPlayer(media);

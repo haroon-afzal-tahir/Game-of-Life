@@ -2,6 +2,7 @@ package com.FactoryImplementation;
 
 import com.UI.Console;
 import com.UI.Main;
+import org.json.simple.JSONObject;
 
 public class UI_Factory {
 	// UI Object
@@ -10,6 +11,10 @@ public class UI_Factory {
 	Console Console_Object = null;
 	
 	public UI_Factory() {
+	}
+	
+	public UI_Factory(JSONObject doc) {
+	
 	}
 	
 	public Main getUI() {
