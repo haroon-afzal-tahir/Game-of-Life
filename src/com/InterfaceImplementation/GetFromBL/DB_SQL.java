@@ -2,6 +2,7 @@ package com.InterfaceImplementation.GetFromBL;
 
 
 import com.BL.Game;
+import com.FactoryImplementation.BL_Factory;
 import com.Interfaces.SetToBL.DB_I;
 
 import java.sql.*;
@@ -27,7 +28,7 @@ public class DB_SQL implements DB_I {
 	}
 	
 	@Override
-	public void save(Game obj, String filename) {
+	public void save(BL_Factory obj, String filename) {
 		try {
 			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 			String SQL1 = "INSERT INTO state(StateName) VALUES (?)";

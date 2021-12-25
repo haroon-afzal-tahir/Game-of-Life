@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-
 public class Final_Main extends Application {
 	Button button = new Button("Submit");
 	
@@ -114,6 +113,7 @@ public class Final_Main extends Application {
 						e.printStackTrace();
 					}
 				}
+				primaryStage.close();
 			}
 		});
 	}

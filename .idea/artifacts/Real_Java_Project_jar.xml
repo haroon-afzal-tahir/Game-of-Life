@@ -1,0 +1,30 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Real_Java_Project:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Real_Java_Project_jar</output-path>
+    <root id="archive" name="Real_Java_Project.jar">
+      <element id="module-output" name="Real_Java_Project" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/src.zip" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/javafx-swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/javafx.web.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/javafx.base.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/javafx.fxml.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/javafx.media.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/javafx.swing.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/javafx.controls.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/javafx-sdk-11/lib/javafx.graphics.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/json-simple-1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/openjfx-17.0.1_windows-x64_bin-sdk/javafx-sdk-17.0.1/lib/javafx-swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/openjfx-17.0.1_windows-x64_bin-sdk/javafx-sdk-17.0.1/lib/javafx.web.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/openjfx-17.0.1_windows-x64_bin-sdk/javafx-sdk-17.0.1/lib/javafx.base.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/openjfx-17.0.1_windows-x64_bin-sdk/javafx-sdk-17.0.1/lib/javafx.fxml.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/openjfx-17.0.1_windows-x64_bin-sdk/javafx-sdk-17.0.1/lib/javafx.media.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/openjfx-17.0.1_windows-x64_bin-sdk/javafx-sdk-17.0.1/lib/javafx.swing.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/openjfx-17.0.1_windows-x64_bin-sdk/javafx-sdk-17.0.1/lib/javafx.controls.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Java Libraries/openjfx-17.0.1_windows-x64_bin-sdk/javafx-sdk-17.0.1/lib/javafx.graphics.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/mysql-connector-java-8.0.27.jar" path-in-jar="/" />
+      <element id="library" level="project" name="lib" />
+      <element id="library" level="project" name="json-simple-1.1" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/mysql-connector-java-8.0.27.jar" />
+    </root>
+  </artifact>
+</component>

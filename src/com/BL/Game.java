@@ -1,6 +1,7 @@
 package com.BL;
 
-import com.FactoryImplementation.Factory;
+import com.FactoryImplementation.BL_Factory;
+import com.FactoryImplementation.UI_Factory;
 import com.Interfaces.SetToBL.DB_I;
 import com.Interfaces.SetToBL.UI_I;
 import com.UI.Console;
@@ -13,14 +14,14 @@ public class Game implements Runnable {
     private int generations;
     private UI_I UI_Listener;
     
-    Factory factory = new Factory();
+    UI_Factory UIFactory = new UI_Factory();
     
     private Thread start;
     
-    public Game(int rows, int cols, Factory factory) {
+    public Game(int rows, int cols, UI_Factory UIFactory) {
         board = new Board(rows, cols);
         controls = new Controls(100, 0, true);
-        this.factory = factory;
+        this.UIFactory = UIFactory;
     }
     
     public Game(int rows, int cols) {
@@ -96,7 +97,7 @@ public class Game implements Runnable {
     }
     
     public void save(String filename) {
-        DB_Listener.save(this, filename);
+        DB_Listener.save((BL_Factory) this, filename);
     }
     
     public String view() {
@@ -128,8 +129,8 @@ public class Game implements Runnable {
     
     @Override
     public void run() {
-        Main UI = factory.getUI();
-        Console console = factory.getConsole();
+        Main UI = UIFactory.getUI();
+        Console console = UIFactory.getConsole();
         while (this.controls.getplay() == true) {
             if (UI != null) {
                 UI.step();

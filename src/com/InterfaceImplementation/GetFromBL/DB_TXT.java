@@ -1,6 +1,7 @@
 package com.InterfaceImplementation.GetFromBL;
 
 import com.BL.Game;
+import com.FactoryImplementation.BL_Factory;
 import com.Interfaces.SetToBL.DB_I;
 
 import java.io.*;
@@ -23,12 +24,12 @@ public class DB_TXT implements DB_I {
         }
 
     }
-
-    public void save(Game obj, String filename) {
     
+    public void save(BL_Factory obj, String filename) {
+        
         String filePath = new File("").getAbsolutePath();
         File dir = new File(filePath + "/files");
-    
+        
         File[] matches = dir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.endsWith(".txt");

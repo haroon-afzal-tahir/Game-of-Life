@@ -1,8 +1,8 @@
 package com.UI;
 
 import Colors.Color;
-import com.BL.Game;
-import com.FactoryImplementation.Factory;
+import com.FactoryImplementation.BL_Factory;
+import com.FactoryImplementation.UI_Factory;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
 import com.Interfaces.SetToBL.DB_I;
 import com.Interfaces.SetToBL.UI_I;
@@ -12,23 +12,23 @@ import java.util.Scanner;
 
 public class Console implements UI_To_BL_Data_Transfer, UI_I {
 	int rows = 20, columns = 75;
-	Factory factory;
-	Game game;
+	UI_Factory UIFactory;
+	BL_Factory game;
 	
 	final static Scanner input = new Scanner(System.in);
 	
-	public Console(int rows, int columns, Factory factory) {
+	public Console(int rows, int columns, UI_Factory UIFactory) {
 		this.rows = rows;
 		this.columns = columns;
-		this.factory = factory;
+		this.UIFactory = UIFactory;
 		
-		game = new Game(this.rows, this.columns, this.factory);
+		game = new BL_Factory(this.rows, this.columns, this.UIFactory);
 	}
 	
 	public static void main(DB_I test) {
-		Factory factory = new Factory();
-		Console obj = new Console(20, 75, factory);
-		factory.setConsole(obj);
+		UI_Factory UIFactory = new UI_Factory();
+		Console obj = new Console(20, 75, UIFactory);
+		UIFactory.setConsole(obj);
 		obj.setZoomFactor(100);
 		obj.setSpeedFactor(0.15f);
 		obj.game.attachDB(test);

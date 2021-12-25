@@ -1,8 +1,7 @@
-//////////////////////////GUI Buttons///////////////////////////////////////////////
 package com.UI;
 
-import com.BL.Game;
-import com.FactoryImplementation.Factory;
+import com.FactoryImplementation.BL_Factory;
+import com.FactoryImplementation.UI_Factory;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
 import com.Interfaces.SetToBL.DB_I;
 import com.Interfaces.SetToBL.UI_I;
@@ -30,8 +29,6 @@ import java.io.File;
 public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     ListView<String> deletelist = new ListView<String>();
     ListView<String> loadlist = new ListView<String>();
-    
-    Label Counter = new Label("0");
     
     Button start = new Button("Start");
     Button stop = new Button("Stop");
@@ -63,11 +60,11 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     private int rows = 20, columns = 75;
     private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
     
-    Factory factory = new Factory();
-    private Game game = new Game(rows, columns, factory);
+    UI_Factory UIFactory = new UI_Factory();
+    private BL_Factory game;
     
     public Main(DB_I obj) throws Exception {
-        game = new Game(rows, columns, factory);
+        game = new BL_Factory(rows, columns, UIFactory);
         game.attachDB(obj);
         SetGenerations(0);
         start(new Stage());
@@ -75,6 +72,22 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     
     public static void main(String[] args) {
         launch(args);
+    }
+    
+    public boolean checkIsAnyAlive() {
+        boolean isAnyAlive = false;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (getCellStatus(i, j)) {
+                    isAnyAlive = true;
+                    break;
+                }
+            }
+            if (isAnyAlive) {
+                break;
+            }
+        }
+        return isAnyAlive;
     }
     
     public ObservableList<String> UpdateList() {
@@ -129,13 +142,12 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
             PlayMp3(new Media(new File("src\\com\\Sound\\Game Running.mp3").toURI().toString()));
         } else {
             PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
+            setPlay(false);
         }
         SetGenerations(GetGenerations() + 1);
-        Counter.setText(String.valueOf(GetGenerations()));
     }
 
     public GridPane GetButtons() {
-        Counter.setStyle("-fx-text-fill: #ffffff");
     
         Zoom.setShowTickMarks(true);
         Zoom.setShowTickLabels(true);
@@ -204,7 +216,6 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         //gridPane.add(Zoom, 1, 1, 2, 1);
         gridPane.add(speedIcon, 2, 1, 2, 1);
         //gridPane.add(Speed, 3, 1, 2, 1);
-        gridPane.add(Counter, 8, 0);
         // Setting Horizontal Gap Between Buttons
         gridPane.setHgap(20);
         gridPane.setVgap(20);
@@ -252,8 +263,8 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                 reset.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
+                        setPlay(false);
                         SetGenerations(0);
-                        Counter.setText(String.valueOf(GetGenerations()));
                         PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
                         for (int i = 0; i < rows; i++) {
                             for (int j = 0; j < columns; j++) {
@@ -277,7 +288,11 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         setPlay(false);
-                        PlayMp3(new Media(new File("src\\com\\Sound\\Stop Press.mp3").toURI().toString()));
+                        if (checkIsAnyAlive()) {
+                            PlayMp3(new Media(new File("src\\com\\Sound\\Victory.mp3").toURI().toString()));
+                        } else {
+                            PlayMp3(new Media(new File("src\\com\\Sound\\Stop Press.mp3").toURI().toString()));
+                        }
                     }
                 });
 
@@ -538,7 +553,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         primaryStage.setTitle("Game Of Life");
         primaryStage.getIcons().add(new Image("com/Images/Icon.png"));
     
-        factory.setUI(this);
+        UIFactory.setUI(this);
     
         Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
         Scene manageState = new Scene(ManageGridPane(), 500, 200);
