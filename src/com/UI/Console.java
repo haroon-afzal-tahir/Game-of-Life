@@ -1,11 +1,11 @@
 package com.UI;
 
 import Colors.Color;
+import com.BL.DB_I;
+import com.BL.UI_I;
+import com.BL.UI_To_BL_Data_Transfer;
 import com.FactoryImplementation.BL_Factory;
 import com.FactoryImplementation.UI_Factory;
-import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
-import com.Interfaces.SetToBL.DB_I;
-import com.Interfaces.SetToBL.UI_I;
 import com.JSON_API.Simple_API;
 import org.json.simple.JSONObject;
 
@@ -76,7 +76,7 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 						filename = input.next();
 					}
 					
-					save(obj, filename);
+					save(obj, Simple_API.StringToJSON(filename, "StateName"));
 					break;
 				case '2':
 					load(obj);
@@ -110,18 +110,18 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 		System.out.print("Enter State Name To Load: ");
 		String temp;
 		temp = input.next();
-		obj.game.load(temp + ".txt");
+		obj.game.load(Simple_API.StringToJSON(temp + ".txt", "StateName"));
 	}
 	
 	public static void delete(Console obj) {
 		System.out.println(Color.CYAN + view(obj));
 		System.out.print(Color.GREEN + "Enter Which State You Want To Delete: " + Color.RESET);
 		String temp = input.next();
-		obj.game.delete(temp + ".txt");
+		obj.game.delete(Simple_API.StringToJSON(temp + ".txt", "StateName"));
 	}
 	
 	public static String view(Console obj) {
-		return obj.game.view();
+		return Simple_API.JSONToString(obj.game.view());
 	}
 	
 	public static void input(Console obj) {
@@ -151,7 +151,7 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 		obj.SetGenerations(Simple_API.StringToJSON(String.valueOf(generations), "Generations"));
 	}
 	
-	public static void save(Console obj, String filename) {
+	public static void save(Console obj, JSONObject filename) {
 		obj.game.save(filename);
 	}
 	

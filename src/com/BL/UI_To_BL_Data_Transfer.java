@@ -1,4 +1,4 @@
-package com.Interfaces.GetFromBL.UI;
+package com.BL;
 
 import org.json.simple.JSONObject;
 

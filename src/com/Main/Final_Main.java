@@ -1,9 +1,9 @@
 package com.Main;
 
-import com.InterfaceImplementation.GetFromBL.DB_SQL;
-import com.InterfaceImplementation.GetFromBL.DB_TXT;
-import com.Interfaces.SetToBL.DB_I;
-import com.Interfaces.SetToBL.UI_I;
+import com.BL.DB_I;
+import com.BL.UI_I;
+import com.DB.DB_SQL;
+import com.DB.DB_TXT;
 import com.UI.Console;
 import com.UI.Main;
 import javafx.application.Application;
@@ -81,7 +81,7 @@ public class Final_Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Choose");
-		primaryStage.getIcons().add(new Image("com/Images/Icon.png"));
+		primaryStage.getIcons().add(new Image("com/Additional/Icon.png"));
 		
 		Scene scene = new Scene(GetOptions(), 300, 250);
 		

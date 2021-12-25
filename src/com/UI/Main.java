@@ -1,10 +1,10 @@
 package com.UI;
 
+import com.BL.DB_I;
+import com.BL.UI_I;
+import com.BL.UI_To_BL_Data_Transfer;
 import com.FactoryImplementation.BL_Factory;
 import com.FactoryImplementation.UI_Factory;
-import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
-import com.Interfaces.SetToBL.DB_I;
-import com.Interfaces.SetToBL.UI_I;
 import com.JSON_API.Simple_API;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -103,26 +103,34 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     }
     
     public String[] GetStates() {
-        String temp = game.view();
-        int count = 0;
-        for (int i = 0; i < temp.length(); i++) {
-            if (temp.charAt(i) == '\n') {
-                count++;
-            }
-        }
-        String[] list = new String[count];
-        int index = 0;
-        for (int i = 0; i < count; i++) {
-            String test = "";
-            for (int j = 0; temp.charAt(index) != '\n' && temp.charAt(index) != '\0'; j++) {
-                test += temp.charAt(index++);
-            }
-            if (test.length() > 4) {
-                test = test.substring(0, test.length() - 4);
-                list[i] = test;
-                index++;
-            }
-        }
+		String temp = Simple_API.JSONToString(game.view());
+		int count = 0;
+		for (int i = 0; i < temp.length(); i++) {
+			if (temp.charAt(i) == '\\') {
+				count++;
+			}
+		}
+		String[] list = new String[count];
+		int index = 0;
+		for (int i = 0; i < count; i++) {
+			String test = "";
+			for (int j = 0; temp.charAt(index) != '\\' && temp.charAt(index) != '\0'; j++) {
+				if (index != 0) {
+					if (temp.charAt(index - 1) != '\\') {
+						test += temp.charAt(index++);
+					} else {
+						index++;
+					}
+				} else {
+					test += temp.charAt(index++);
+				}
+			}
+			if (test.length() > 4) {
+				test = test.substring(0, test.length() - 4);
+				list[i] = test;
+				index++;
+			}
+		}
         return list;
     }
     
@@ -151,12 +159,12 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
 			}
 		}
 		if (isSame) {
-			PlayMp3(new Media(new File("src\\com\\Sound\\Victory.mp3").toURI().toString()));
+			PlayMp3(new Media(new File("src\\com\\Additional\\Victory.mp3").toURI().toString()));
 			setPlay(Simple_API.BooleanToJSON(false, "Play"));
 		} else if (!isAllDead) {
-			PlayMp3(new Media(new File("src\\com\\Sound\\Game Running.mp3").toURI().toString()));
+			PlayMp3(new Media(new File("src\\com\\Additional\\Game Running.mp3").toURI().toString()));
 		} else {
-			PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
+			PlayMp3(new Media(new File("src\\com\\Additional\\Cells Dead.mp3").toURI().toString()));
 			setPlay(Simple_API.BooleanToJSON(false, "Play"));
 		}
 		SetGenerations(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(Simple_API.JSONToString(GetGenerations())) + 1), "Generations"));
@@ -202,30 +210,30 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
             public void handle(MouseEvent mouseEvent) {
 				setPlay(Simple_API.BooleanToJSON(false, "Play"));
 				manageStates.show();
-            }
-        });
-    
-    
-        // GridPane Declaration
-        GridPane gridPane = new GridPane();
-    
-        GridPane zoomIcon = new GridPane();
-        GridPane speedIcon = new GridPane();
-    
-        zoomIcon.add(new ImageView("com/Images/zoom.png"), 0, 0);
-        zoomIcon.add(Zoom, 1, 0);
-        speedIcon.add(new ImageView("com/Images/speed.png"), 0, 0);
-        speedIcon.add(Speed, 1, 0);
-    
-        zoomIcon.setAlignment(Pos.TOP_RIGHT);
-        speedIcon.setAlignment(Pos.TOP_RIGHT);
-    
-    
-        // Adding Buttons in GridPane
-        gridPane.add(start, 0, 0);
-        gridPane.add(stop, 1, 0);
-        gridPane.add(next, 2, 0);
-        gridPane.add(reset, 3, 0);
+			}
+		});
+	
+	
+		// GridPane Declaration
+		GridPane gridPane = new GridPane();
+	
+		GridPane zoomIcon = new GridPane();
+		GridPane speedIcon = new GridPane();
+	
+		zoomIcon.add(new ImageView("com/Additional/zoom.png"), 0, 0);
+		zoomIcon.add(Zoom, 1, 0);
+		speedIcon.add(new ImageView("com/Additional/speed.png"), 0, 0);
+		speedIcon.add(Speed, 1, 0);
+	
+		zoomIcon.setAlignment(Pos.TOP_RIGHT);
+		speedIcon.setAlignment(Pos.TOP_RIGHT);
+	
+	
+		// Adding Buttons in GridPane
+		gridPane.add(start, 0, 0);
+		gridPane.add(stop, 1, 0);
+		gridPane.add(next, 2, 0);
+		gridPane.add(reset, 3, 0);
         gridPane.add(manage, 4, 0);
         gridPane.add(zoomIcon, 0, 1, 2, 1);
         //gridPane.add(Zoom, 1, 1, 2, 1);
@@ -269,10 +277,10 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                 next.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        step();
-                        UpdateBoard();
-                        PlayMp3(new Media(new File("src\\com\\Sound\\Game Running.mp3").toURI().toString()));
-                    }
+						step();
+						UpdateBoard();
+						PlayMp3(new Media(new File("src\\com\\Additional\\Game Running.mp3").toURI().toString()));
+					}
                 });
 
                 reset.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -280,7 +288,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                     public void handle(MouseEvent mouseEvent) {
 						setPlay(Simple_API.BooleanToJSON(false, "State"));
 						SetGenerations(Simple_API.StringToJSON("0", "Generations"));
-						PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
+						PlayMp3(new Media(new File("src\\com\\Additional\\Cells Dead.mp3").toURI().toString()));
 						for (int i = 0; i < rows; i++) {
 							for (int j = 0; j < columns; j++) {
 								grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
@@ -304,9 +312,9 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                     public void handle(MouseEvent mouseEvent) {
 						setPlay(Simple_API.BooleanToJSON(false, "State"));
 						if (checkIsAnyAlive()) {
-							PlayMp3(new Media(new File("src\\com\\Sound\\Victory.mp3").toURI().toString()));
+							PlayMp3(new Media(new File("src\\com\\Additional\\Victory.mp3").toURI().toString()));
 						} else {
-							PlayMp3(new Media(new File("src\\com\\Sound\\Stop Press.mp3").toURI().toString()));
+							PlayMp3(new Media(new File("src\\com\\Additional\\Stop Press.mp3").toURI().toString()));
 						}
 					}
                 });
@@ -450,7 +458,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         loadState.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-				game.load(loadlist.getSelectionModel().getSelectedItem() + ".txt");
+				game.load(Simple_API.StringToJSON(loadlist.getSelectionModel().getSelectedItem() + ".txt", "StateName"));
 				UpdateBoard();
 				setZoomFactor(Simple_API.StringToJSON("0", "Zoom"));
 				setSpeedFactor(Simple_API.StringToJSON("1", "Speed"));
@@ -461,12 +469,12 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         deleteState.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.delete(loadlist.getSelectionModel().getSelectedItem() + ".txt");
-                loadlist.setItems(UpdateList());
-                deletelist.setItems(UpdateList());
-                loadStates.close();
-                manageStates.close();
-            }
+				game.delete(Simple_API.StringToJSON(loadlist.getSelectionModel().getSelectedItem() + ".txt", "StateName"));
+				loadlist.setItems(UpdateList());
+				deletelist.setItems(UpdateList());
+				loadStates.close();
+				manageStates.close();
+			}
         });
     
         loadlist.setItems(UpdateList());
@@ -500,12 +508,12 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         Submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.save(textField.getText());
-                loadlist.setItems(UpdateList());
-                deletelist.setItems(UpdateList());
-                saveState.close();
-                manageStates.close();
-            }
+				game.save(Simple_API.StringToJSON(textField.getText(), "StateName"));
+				loadlist.setItems(UpdateList());
+				deletelist.setItems(UpdateList());
+				saveState.close();
+				manageStates.close();
+			}
         });
     
     
@@ -540,12 +548,12 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         deleteSave.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.delete(deletelist.getSelectionModel().getSelectedItem() + ".txt");
-                deletelist.setItems(UpdateList());
-                loadlist.setItems(UpdateList());
-                deleteStates.close();
-                manageStates.close();
-            }
+				game.delete(Simple_API.StringToJSON(deletelist.getSelectionModel().getSelectedItem() + ".txt", "StateName"));
+				deletelist.setItems(UpdateList());
+				loadlist.setItems(UpdateList());
+				deleteStates.close();
+				manageStates.close();
+			}
         });
     
         gridPane.add(deletelist, 0, 0, 1, 3);
@@ -563,42 +571,42 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Game Of Life");
-        primaryStage.getIcons().add(new Image("com/Images/Icon.png"));
-    
-        UIFactory.setUI(this);
-    
-        Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
-        Scene manageState = new Scene(ManageGridPane(), 500, 200);
-        Scene viewStates = new Scene(ViewStates(), 400, 200);
-        Scene saveStates = new Scene(SavesState(), 400, 200);
-        Scene deleteState = new Scene(DeleteState(), 400, 200);
-        
-        scene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
-        manageState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
-        viewStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
-        saveStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
-        deleteState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
-        
-        primaryStage.setMaximized(true);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        
-        manageStates.setTitle("Manage States");
-        manageStates.setScene(manageState);
-        manageStates.getIcons().add(new Image("com/Images/Icon.png"));
-        
-        loadStates.setTitle("All States");
-        loadStates.setScene(viewStates);
-		loadStates.getIcons().add(new Image("com/Images/Icon.png"));
+		primaryStage.setTitle("Game Of Life");
+		primaryStage.getIcons().add(new Image("com/Additional/Icon.png"));
+	
+		UIFactory.setUI(this);
+	
+		Scene scene = new Scene(MergeGridPanes(GetButtons(), GetBoard()), 1, 1);
+		Scene manageState = new Scene(ManageGridPane(), 500, 200);
+		Scene viewStates = new Scene(ViewStates(), 400, 200);
+		Scene saveStates = new Scene(SavesState(), 400, 200);
+		Scene deleteState = new Scene(DeleteState(), 400, 200);
+	
+		scene.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+		manageState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+		viewStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+		saveStates.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+		deleteState.getStylesheets().add((new File("src\\com\\UI\\StyleSheet.css")).toURI().toURL().toString());
+	
+		primaryStage.setMaximized(true);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	
+		manageStates.setTitle("Manage States");
+		manageStates.setScene(manageState);
+		manageStates.getIcons().add(new Image("com/Additional/Icon.png"));
+	
+		loadStates.setTitle("All States");
+		loadStates.setScene(viewStates);
+		loadStates.getIcons().add(new Image("com/Additional/Icon.png"));
 	
 		saveState.setTitle("Save A State");
 		saveState.setScene(saveStates);
-		saveState.getIcons().add(new Image("com/Images/Icon.png"));
+		saveState.getIcons().add(new Image("com/Additional/Icon.png"));
 	
 		deleteStates.setTitle("Delete A State");
 		deleteStates.setScene(deleteState);
-		deleteStates.getIcons().add(new Image("com/Images/Icon.png"));
+		deleteStates.getIcons().add(new Image("com/Additional/Icon.png"));
 	}
 	
 	@Override

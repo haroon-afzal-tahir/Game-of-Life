@@ -1,10 +1,11 @@
-package com.InterfaceImplementation.GetFromBL;
+package com.DB;
 
 
-import com.BL.Game;
+import com.BL.DB_I;
 import com.FactoryImplementation.BL_Factory;
-import com.Interfaces.SetToBL.DB_I;
 import com.JSON_API.Simple_API;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.sql.*;
 
@@ -14,14 +15,14 @@ public class DB_SQL implements DB_I {
 	String password = "zxasqw123edc";
 	
 	@Override
-	public void delete(String StateName) {
+	public void delete(JSONObject StateName) {
 		try {
 			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 			String SQL = "DELETE FROM state WHERE StateName=?";
 			
 			PreparedStatement statement = connection.prepareStatement(SQL);
 			
-			statement.setString(1, StateName);
+			statement.setString(1, Simple_API.JSONToString(StateName));
 			statement.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -29,7 +30,7 @@ public class DB_SQL implements DB_I {
 	}
 	
 	@Override
-	public void save(BL_Factory obj, String filename) {
+	public void save(JSONObject obj, JSONObject filename) {
 		try {
 			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 			String SQL1 = "INSERT INTO state(StateName) VALUES (?)";
@@ -38,41 +39,53 @@ public class DB_SQL implements DB_I {
 			String SQL4 = "INSERT INTO cell(StateName, ID, rownum, columnnum) VALUES (?, ?, ?, ?)";
 			
 			PreparedStatement statement = connection.prepareStatement(SQL1);
-			statement.setString(1, filename + ".txt");
+			statement.setString(1, Simple_API.JSONToString(filename) + ".txt");
 			statement.executeUpdate();
 			
 			statement = connection.prepareStatement(SQL2);
-			statement.setString(1, filename + ".txt");
-			statement.setInt(2, obj.getBoard().getRows());
-			statement.setInt(3, obj.getBoard().getColumns());
+			statement.setString(1, Simple_API.JSONToString(filename) + ".txt");
+			statement.setInt(2, 20);
+			statement.setInt(3, 75);
 			statement.executeUpdate();
 			
+			
 			statement = connection.prepareStatement(SQL3);
-			statement.setString(1, filename + ".txt");
-			statement.setInt(2, obj.getgenerations());
-			statement.setInt(3, (int) obj.getControl().getSpeedFactor());
+			statement.setString(1, Simple_API.JSONToString(filename) + ".txt");
+			statement.setInt(2, (Integer) obj.get("Generations"));
+			statement.setInt(3, Math.round((Float) obj.get("Speed")));
 			statement.executeUpdate();
 			int id = 1;
-			for (int i = 0; i < obj.getBoard().getRows(); i++) {
-				for (int j = 0; j < obj.getBoard().getColumns(); j++) {
+			JSONArray jsonArray = (JSONArray) obj.get("AliveCells");
+			for (int i = 0; i < jsonArray.size(); i = i + 2) {
+				statement = connection.prepareStatement(SQL4);
+				statement.setString(1, Simple_API.JSONToString(filename) + ".txt");
+				statement.setInt(2, id++);
+				statement.setInt(3, (Integer) jsonArray.get(i + 0));
+				statement.setInt(4, (Integer) jsonArray.get(i + 1));
+				statement.executeUpdate();
+			}
+			//for (int i = 0; i < 20; i++) {
+			//for (int j = 0; j < 75; j++) {
+					/*
 					if (obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).isAlive()) {
 						statement = connection.prepareStatement(SQL4);
-						statement.setString(1, filename + ".txt");
+						statement.setString(1, Simple_API.JSONToString(filename) + ".txt");
 						statement.setInt(2, id);
 						statement.setInt(3, obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).getX());
 						statement.setInt(4, obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).getY());
 						statement.executeUpdate();
 						id++;
 					}
-				}
-			}
+					*/
+			//}
+			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
-	public String view() {
+	public JSONObject view() {
 		String result = "";
 		
 		try {
@@ -89,37 +102,44 @@ public class DB_SQL implements DB_I {
 			e.printStackTrace();
 		}
 		
-		return result;
+		return Simple_API.StringToJSON(result, "States");
 	}
 	
 	@Override
-	public Game load(String stateName) {
-		Game obj = new Game(Simple_API.StringToJSON("20", "Row"), Simple_API.StringToJSON("75", "Column"));
+	public JSONObject load(JSONObject stateName) {
+		BL_Factory obj = new BL_Factory(Simple_API.StringToJSON("20", "Row"), Simple_API.StringToJSON("75", "Column"));
+		JSONObject jsonObject = new JSONObject();
 		try {
 			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 			Statement statement = connection.createStatement();
 			
 			
 			PreparedStatement preparedStatement = connection.prepareStatement("SELECT rownum, columnnum FROM cell WHERE StateName=?");
-			preparedStatement.setString(1, stateName);
+			preparedStatement.setString(1, Simple_API.JSONToString(stateName));
 			
 			ResultSet resultSet = preparedStatement.executeQuery();
-			
-			while (resultSet.next())
-				obj.getBoard().setCell(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("rownum"))), "I"), Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("columnnum"))), "J"));
+			JSONArray jsonArray = new JSONArray();
+			while (resultSet.next()) {
+				jsonArray.add(Integer.parseInt(resultSet.getString("rownum")));
+				jsonArray.add(Integer.parseInt(resultSet.getString("columnnum")));
+				//obj.getBoard().setCell(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("rownum"))), "I"), Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("columnnum"))), "J"));
+			}
+			jsonObject.put("AliveCells", jsonArray);
 			
 			String SQL = "SELECT Speed, Generations FROM controls WHERE StateName=?";
 			//resultSet = statement.executeQuery("SELECT speed, generations FROM controls WHERE StateName=?");
 			preparedStatement = connection.prepareStatement(SQL);
-			preparedStatement.setString(1, stateName);
+			preparedStatement.setString(1, Simple_API.JSONToString(stateName));
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-				obj.getControl().setSpeedFactor(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("speed"))), "Speed"));
-				obj.getControl().setScore(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("generations"))), "Score"));
+				jsonObject.put("Speed", Integer.parseInt(resultSet.getString("Speed")));
+				jsonObject.put("Generations", Integer.parseInt(resultSet.getString("Generations")));
+				//obj.getControl().setSpeedFactor(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("speed"))), "Speed"));
+				//obj.getControl().setScore(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("generations"))), "Score"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return obj;
+		return jsonObject;
 	}
 }
