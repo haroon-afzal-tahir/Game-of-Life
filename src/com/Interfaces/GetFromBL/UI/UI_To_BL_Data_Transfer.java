@@ -1,29 +1,31 @@
 package com.Interfaces.GetFromBL.UI;
 
+import org.json.simple.JSONObject;
+
 public interface UI_To_BL_Data_Transfer {
-	void setAlive(int row, int column);
+	void setAlive(JSONObject row, JSONObject column);
 	
-	void setDead(int row, int column);
+	void setDead(JSONObject row, JSONObject column);
 	
-	boolean getCellStatus(int row, int column);
+	JSONObject getCellStatus(JSONObject row, JSONObject column);
 	
 	void step();
 	
-	boolean getPlay();
+	JSONObject getPlay();
 	
-	void setPlay(boolean play);
+	void setPlay(JSONObject play);
 	
-	float getZoomFactor();
+	JSONObject getZoomFactor();
 	
-	void setZoomFactor(float zf);
+	void setZoomFactor(JSONObject zf);
 	
-	float getSpeedFactor();
+	JSONObject getSpeedFactor();
 	
-	void setSpeedFactor(float sf);
+	void setSpeedFactor(JSONObject sf);
 	
 	void StartGame();
 	
-	void SetGenerations(int generations);
+	void SetGenerations(JSONObject generations);
 	
-	int GetGenerations();
+	JSONObject GetGenerations();
 }

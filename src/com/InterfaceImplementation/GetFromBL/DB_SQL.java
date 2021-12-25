@@ -4,6 +4,7 @@ package com.InterfaceImplementation.GetFromBL;
 import com.BL.Game;
 import com.FactoryImplementation.BL_Factory;
 import com.Interfaces.SetToBL.DB_I;
+import com.JSON_API.Simple_API;
 
 import java.sql.*;
 
@@ -54,12 +55,12 @@ public class DB_SQL implements DB_I {
 			int id = 1;
 			for (int i = 0; i < obj.getBoard().getRows(); i++) {
 				for (int j = 0; j < obj.getBoard().getColumns(); j++) {
-					if (obj.getBoard().getCell(i, j).isAlive()) {
+					if (obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).isAlive()) {
 						statement = connection.prepareStatement(SQL4);
 						statement.setString(1, filename + ".txt");
 						statement.setInt(2, id);
-						statement.setInt(3, obj.getBoard().getCell(i, j).getX());
-						statement.setInt(4, obj.getBoard().getCell(i, j).getY());
+						statement.setInt(3, obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).getX());
+						statement.setInt(4, obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).getY());
 						statement.executeUpdate();
 						id++;
 					}
@@ -93,7 +94,7 @@ public class DB_SQL implements DB_I {
 	
 	@Override
 	public Game load(String stateName) {
-		Game obj = new Game(20, 75);
+		Game obj = new Game(Simple_API.StringToJSON("20", "Row"), Simple_API.StringToJSON("75", "Column"));
 		try {
 			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 			Statement statement = connection.createStatement();
@@ -105,7 +106,7 @@ public class DB_SQL implements DB_I {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			while (resultSet.next())
-				obj.getBoard().setCell(Integer.parseInt(resultSet.getString("rownum")), Integer.parseInt(resultSet.getString("columnnum")));
+				obj.getBoard().setCell(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("rownum"))), "I"), Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("columnnum"))), "J"));
 			
 			String SQL = "SELECT Speed, Generations FROM controls WHERE StateName=?";
 			//resultSet = statement.executeQuery("SELECT speed, generations FROM controls WHERE StateName=?");
@@ -113,8 +114,8 @@ public class DB_SQL implements DB_I {
 			preparedStatement.setString(1, stateName);
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-				obj.getControl().setSpeedFactor(Integer.parseInt(resultSet.getString("speed")));
-				obj.getControl().setScore(Integer.parseInt(resultSet.getString("generations")));
+				obj.getControl().setSpeedFactor(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("speed"))), "Speed"));
+				obj.getControl().setScore(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(resultSet.getString("generations"))), "Score"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

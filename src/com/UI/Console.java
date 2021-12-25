@@ -6,6 +6,8 @@ import com.FactoryImplementation.UI_Factory;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
 import com.Interfaces.SetToBL.DB_I;
 import com.Interfaces.SetToBL.UI_I;
+import com.JSON_API.Simple_API;
+import org.json.simple.JSONObject;
 
 import java.util.Scanner;
 
@@ -17,20 +19,20 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 	
 	final static Scanner input = new Scanner(System.in);
 	
-	public Console(int rows, int columns, UI_Factory UIFactory) {
-		this.rows = rows;
-		this.columns = columns;
+	public Console(JSONObject rows, JSONObject columns, UI_Factory UIFactory) {
+		this.rows = Integer.parseInt(Simple_API.JSONToString(rows));
+		this.columns = Integer.parseInt(Simple_API.JSONToString(columns));
 		this.UIFactory = UIFactory;
 		
-		game = new BL_Factory(this.rows, this.columns, this.UIFactory);
+		game = new BL_Factory(Simple_API.StringToJSON(String.valueOf(this.rows), "Row"), Simple_API.StringToJSON(String.valueOf(this.columns), "Column"), this.UIFactory);
 	}
 	
 	public static void main(DB_I test) {
 		UI_Factory UIFactory = new UI_Factory();
-		Console obj = new Console(20, 75, UIFactory);
+		Console obj = new Console(Simple_API.StringToJSON("20", "Row"), Simple_API.StringToJSON("75", "Column"), UIFactory);
 		UIFactory.setConsole(obj);
-		obj.setZoomFactor(100);
-		obj.setSpeedFactor(0.15f);
+		obj.setZoomFactor(Simple_API.StringToJSON("100", "Zoom"));
+		obj.setSpeedFactor(Simple_API.StringToJSON("0.15", "Speed"));
 		obj.game.attachDB(test);
 		
 		char choice = 's';
@@ -41,30 +43,30 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 			System.out.print(Color.RESET);
 			switch (choice) {
 				case 's':
-					obj.setPlay(true);
+					obj.setPlay(Simple_API.BooleanToJSON(true, "State"));
 					obj.StartGame();
 					break;
 				case 'S':
-					obj.setPlay(false);
+					obj.setPlay(Simple_API.BooleanToJSON(false, "State"));
 					break;
 				case '+':
-					if (obj.getSpeedFactor() < 0.25f) {
-						obj.setSpeedFactor((float) (obj.getSpeedFactor() + 0.01));
+					if (Float.parseFloat(Simple_API.JSONToString(obj.getSpeedFactor())) < 0.25f) {
+						obj.setSpeedFactor(Simple_API.StringToJSON(String.valueOf((float) (Float.parseFloat(Simple_API.JSONToString(obj.getSpeedFactor())) + 0.01)), "Speed"));
 					}
 					break;
 				case '-':
-					if (obj.getSpeedFactor() > 0.15f) {
-						obj.setSpeedFactor((float) (obj.getSpeedFactor() - 0.01));
+					if (Float.parseFloat(Simple_API.JSONToString(obj.getSpeedFactor())) > 0.15f) {
+						obj.setSpeedFactor(Simple_API.StringToJSON(String.valueOf((float) (Float.parseFloat(Simple_API.JSONToString(obj.getSpeedFactor())) - 0.01)), "Speed"));
 					}
 					break;
 				case '[':
-					if (obj.getZoomFactor() < 1000) {
-						obj.setZoomFactor((obj.getZoomFactor() + 100));
+					if (Float.parseFloat(Simple_API.JSONToString(obj.getZoomFactor())) < 1000) {
+						obj.setZoomFactor(Simple_API.StringToJSON(String.valueOf(Float.parseFloat(Simple_API.JSONToString(obj.getZoomFactor())) + 100), "Zoom"));
 					}
 					break;
 				case ']':
-					if (obj.getZoomFactor() > 100) {
-						obj.setZoomFactor((obj.getZoomFactor() - 100));
+					if (Float.parseFloat(Simple_API.JSONToString(obj.getZoomFactor())) > 100) {
+						obj.setZoomFactor(Simple_API.StringToJSON(String.valueOf(Float.parseFloat(Simple_API.JSONToString(obj.getZoomFactor())) - 100), "Zoom"));
 					}
 					break;
 				case '1':
@@ -78,8 +80,8 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 					break;
 				case '2':
 					load(obj);
-					obj.setZoomFactor(100);
-					obj.setSpeedFactor(0.15f);
+					obj.setZoomFactor(Simple_API.StringToJSON("100", "Zoom"));
+					obj.setSpeedFactor(Simple_API.StringToJSON("0.15", "Speed"));
 					break;
 				case '3':
 					delete(obj);
@@ -128,24 +130,25 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 		x = input.nextInt();
 		y = input.nextInt();
 		
-		if (obj.getCellStatus(x, y))
-			obj.setDead(x, y);
+		if (Simple_API.JSONToBoolean(obj.getCellStatus(Simple_API.StringToJSON(String.valueOf(x), "Row"), Simple_API.StringToJSON(String.valueOf(y), "Column"))))
+			obj.setDead(Simple_API.StringToJSON(String.valueOf(x), "Row"), Simple_API.StringToJSON(String.valueOf(y), "Column"));
 		else
-			obj.setAlive(x, y);
+			obj.setAlive(Simple_API.StringToJSON(String.valueOf(x), "Row"), Simple_API.StringToJSON(String.valueOf(y), "Column"));
 	}
 	
 	public static void reset(Console obj) {
 		for (int i = 0; i < obj.rows; i++) {
 			for (int j = 0; j < obj.columns; j++) {
-				obj.setDead(i, j);
+				obj.setDead(Simple_API.StringToJSON(String.valueOf(i), "Row"), Simple_API.StringToJSON(String.valueOf(j), "Column"));
 			}
 		}
-		obj.SetGenerations(0);
+		obj.SetGenerations(Simple_API.StringToJSON("0", "Generations"));
 	}
 	
 	public static void step(Console obj) {
 		obj.step();
-		obj.SetGenerations(obj.GetGenerations() + 1);
+		int generations = Integer.parseInt(Simple_API.JSONToString(obj.GetGenerations())) + 1;
+		obj.SetGenerations(Simple_API.StringToJSON(String.valueOf(generations), "Generations"));
 	}
 	
 	public static void save(Console obj, String filename) {
@@ -181,10 +184,11 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 		System.out.println();
 		
 		System.out.print("\t");
+		int zoom = Integer.parseInt(Simple_API.JSONToString(obj.getZoomFactor()));
 		for (int j = 0; j < obj.columns; j++) {
 			System.out.print(Color.CYAN);
 			System.out.print(j);
-			for (int k = 0; k < (obj.getZoomFactor() / 100); k++) {
+			for (int k = 0; k < (zoom / 100); k++) {
 				System.out.print("\t");
 			}
 		}
@@ -195,17 +199,17 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 			System.out.print(i + "\t");
 			
 			for (int j = 0; j < obj.columns; j++) {
-				if (getCellStatus(i, j)) {
+				if (Simple_API.JSONToBoolean(getCellStatus(Simple_API.StringToJSON(String.valueOf(i), "Row"), Simple_API.StringToJSON(String.valueOf(j), "Column")))) {
 					System.out.print(Color.RED);
 				} else {
 					System.out.print(Color.WHITE);
 				}
 				System.out.print((char) 0x25A0);
-				for (int k = 0; k < (obj.getZoomFactor() / 100); k++) {
+				for (int k = 0; k < (zoom / 100); k++) {
 					System.out.print("\t");
 				}
 			}
-			for (int j = 0; j < (obj.getZoomFactor() / 100); j++) {
+			for (int j = 0; j < (zoom / 100); j++) {
 				System.out.println();
 			}
 		}
@@ -216,67 +220,67 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 	}
 	
 	@Override
-	public void setAlive(int row, int column) {
-		this.game.getBoard().setAlive(row, column);
+	public void setAlive(JSONObject row, JSONObject column) {
+		game.getBoard().getCell(row, column).setAlive(Simple_API.BooleanToJSON(true, "State"));
 	}
 	
 	@Override
-	public void setDead(int row, int column) {
-		this.game.getBoard().setDead(row, column);
+	public void setDead(JSONObject row, JSONObject column) {
+		game.getBoard().getCell(row, column).setDead(Simple_API.BooleanToJSON(false, "State"));
 	}
 	
 	@Override
-	public boolean getCellStatus(int row, int column) {
-		return this.game.getBoard().getCell(row, column).isAlive();
+	public JSONObject getCellStatus(JSONObject row, JSONObject column) {
+		return Simple_API.BooleanToJSON(game.getBoard().getCell(row, column).isAlive(), "State");
 	}
 	
 	@Override
 	public void step() {
-		this.game.getBoard().step();
+		game.getBoard().step();
 	}
 	
 	@Override
-	public boolean getPlay() {
-		return this.game.getControl().getplay();
+	public JSONObject getPlay() {
+		return Simple_API.BooleanToJSON(game.getControl().getplay(), "State");
 	}
 	
 	@Override
-	public void setPlay(boolean play) {
-		this.game.getControl().setPlay(play);
+	public void setPlay(JSONObject play) {
+		game.getControl().setPlay(play);
 	}
 	
 	@Override
-	public float getZoomFactor() {
-		return this.game.getControl().getZoomfactor();
+	public JSONObject getZoomFactor() {
+		return Simple_API.StringToJSON(String.valueOf(game.getControl().getZoomfactor()), "Zoom");
 	}
 	
 	@Override
-	public void setZoomFactor(float zf) {
-		this.game.getControl().setZoomFactor(zf);
+	public void setZoomFactor(JSONObject zf) {
+		game.getControl().setZoomFactor(zf);
 	}
 	
 	@Override
-	public float getSpeedFactor() {
-		return this.game.getControl().getSpeedFactor();
+	public JSONObject getSpeedFactor() {
+		return Simple_API.StringToJSON(String.valueOf(game.getControl().getSpeedFactor()), "Speed");
 	}
 	
 	@Override
-	public void setSpeedFactor(float sf) {
-		this.game.getControl().setSpeedFactor(sf);
+	public void setSpeedFactor(JSONObject sf) {
+		game.getControl().setSpeedFactor(sf);
 	}
 	
 	@Override
 	public void StartGame() {
-		this.game.StartGame();
+		game.StartGame();
 	}
 	
 	@Override
-	public void SetGenerations(int generations) {
-		this.game.getControl().setGenerations(generations);
+	public void SetGenerations(JSONObject generations) {
+		game.getControl().setGenerations(generations);
 	}
 	
 	@Override
-	public int GetGenerations() {
-		return this.game.getControl().getGenerations();
+	public JSONObject GetGenerations() {
+		return Simple_API.StringToJSON(String.valueOf(game.getControl().getGenerations()), "Generations");
 	}
 }

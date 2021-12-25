@@ -3,27 +3,29 @@ package com.BL;
 import com.FactoryImplementation.BL_Factory;
 import com.FactoryImplementation.UI_Factory;
 import com.Interfaces.SetToBL.DB_I;
+import com.JSON_API.Simple_API;
 import com.UI.Console;
 import com.UI.Main;
+import org.json.simple.JSONObject;
 
 public class Game implements Runnable {
     private Board board;
     private Controls controls;
     private DB_I DB_Listener;
     private int generations;
-    
-    UI_Factory UIFactory = new UI_Factory();
-    
-    public Game(int rows, int cols, UI_Factory UIFactory) {
-        board = new Board(rows, cols);
-		controls = new Controls(100, 0, true);
+	
+	UI_Factory UIFactory = new UI_Factory();
+	
+	public Game(JSONObject rows, JSONObject cols, UI_Factory UIFactory) {
+		board = new Board(rows, cols);
+		controls = new Controls(Simple_API.StringToJSON("100", "Zoom"), Simple_API.StringToJSON("0", "Speed"), Simple_API.BooleanToJSON(true, "State"));
 		this.UIFactory = UIFactory;
 	}
 	
 	
-	public Game(int rows, int cols) {
+	public Game(JSONObject rows, JSONObject cols) {
 		board = new Board(rows, cols);
-		controls = new Controls(100, 0, true);
+		controls = new Controls(Simple_API.StringToJSON("100", "Zoom"), Simple_API.StringToJSON("0", "Speed"), Simple_API.BooleanToJSON(true, "State"));
 	}
 	
 	public Game() {
@@ -40,10 +42,10 @@ public class Game implements Runnable {
 	public void attachDB(DB_I list) {
 		this.DB_Listener = list;
     }
-    
-    public void setspeedfactor(float sf) {
-        this.controls.setSpeedFactor(sf);
-    }
+	
+	public void setspeedfactor(JSONObject sf) {
+		this.controls.setSpeedFactor(sf);
+	}
     
     public float getspeedfactor() {
         return this.controls.getSpeedFactor();
@@ -52,10 +54,10 @@ public class Game implements Runnable {
     public int getgenerations() {
         return generations;
     }
-
-    public void setgenerations(int gen) {
-        generations = gen;
-    }
+	
+	public void setgenerations(JSONObject gen) {
+		generations = Integer.parseInt(Simple_API.JSONToString(gen));
+	}
     
     public void save(String filename) {
         DB_Listener.save((BL_Factory) this, filename);
@@ -75,10 +77,10 @@ public class Game implements Runnable {
     public void delete(String statename) {
         DB_Listener.delete(statename);
     }
-    
-    public boolean isAlive(int row, int column) {
-        return board.isAlive(row, column);
-    }
+	
+	public boolean isAlive(JSONObject row, JSONObject column) {
+		return board.isAlive(row, column);
+	}
     
     @Override
     public void run() {
@@ -92,7 +94,7 @@ public class Game implements Runnable {
                 console.step();
                 console.print(console);
             }
-            setgenerations(getgenerations() + 1);
+			setgenerations(Simple_API.StringToJSON(String.valueOf(getgenerations() + 1), "Generations"));
             try {
                 Thread.sleep((long) (((1 / (getspeedfactor())) * 100000)));
             } catch (InterruptedException e) {

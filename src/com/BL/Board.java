@@ -1,5 +1,8 @@
 package com.BL;
 
+import com.JSON_API.Simple_API;
+import org.json.simple.JSONObject;
+
 public class Board {
 	
 	// -------------------------------------------------------------
@@ -15,14 +18,14 @@ public class Board {
 	// ------------------------ CONSTRUCTOR ------------------------
 	// -------------------------------------------------------------
 	
-	public Board(int rows, int columns) {
-		this.rows = rows;
-		this.columns = columns;
+	public Board(JSONObject rows, JSONObject columns) {
+		this.rows = Integer.parseInt(Simple_API.JSONToString(rows));
+		this.columns = Integer.parseInt(Simple_API.JSONToString(columns));
 		
-		this.board = new Cell[rows][columns];
+		this.board = new Cell[this.rows][this.columns];
 		for (int i = 0; i < this.rows; i++) {
 			for (int j = 0; j < this.columns; j++) {
-				this.board[i][j] = new Cell(i, j);
+				this.board[i][j] = new Cell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J"));
 			}
 		}
 	}
@@ -31,43 +34,21 @@ public class Board {
 	// ------------------------ FUNCTIONS --------------------------
 	// -------------------------------------------------------------
 	
-	
-	public void printBoard() {
-		System.out.println("----------");
-		for (int i = 0; i < this.rows; i++) {
-			String line = "|";
-			for (int j = 0; j < this.columns; j++) {
-				line += (this.board[i][j].isAlive()) ? "*" : ".";
-			}
-			line += "|";
-			System.out.println(line);
-		}
-		System.out.println("----------\n");
-	}
-	
-	public void setAlive(int row, int column) {
-		this.board[row][column].setValues(row, column, true);
-	}
-	
-	public void setDead(int row, int column) {
-		this.board[row][column].setValues(row, column, false);
-	}
-	
-	public boolean isAlive(int row, int column) {
-		return this.board[row][column].isAlive();
-	}
-	
-	public void ToggleState(int row, int column) {
-		this.board[row][column].setAlive(!this.board[row][column].isAlive());
+	public boolean isAlive(JSONObject row, JSONObject column) {
+		int i = Integer.parseInt(Simple_API.JSONToString(row));
+		int j = Integer.parseInt(Simple_API.JSONToString(column));
+		return this.board[i][j].isAlive();
 	}
 	
 	// This Function Determines The Alive Neighbors With Respect To The Selected Cell
-	public int CountAliveNeighbors(int row, int column) {
+	public int CountAliveNeighbors(JSONObject row, JSONObject column) {
 		int count = 0;
-		for (int i = row - 1; i <= row + 1; i++) {
-			for (int j = column - 1; j <= column + 1; j++) {
-				if (i != row || j != column) {
-					count += (getState(i, j)) ? 1 : 0;
+		int temp_row = Integer.parseInt(Simple_API.JSONToString(row));
+		int temp_column = Integer.parseInt(Simple_API.JSONToString(column));
+		for (int i = temp_row - 1; i <= temp_row + 1; i++) {
+			for (int j = temp_column - 1; j <= temp_column + 1; j++) {
+				if (i != temp_row || j != temp_column) {
+					count += (getState(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J"))) ? 1 : 0;
 				}
 			}
 		}
@@ -75,28 +56,30 @@ public class Board {
 	}
 	
 	// This Function Returns The State Of The Selected Cell
-	public boolean getState(int row, int column) {
-		if (row < 0 || row >= this.rows) return false;
-		if (column < 0 || column >= this.columns) return false;
-		return this.board[row][column].isAlive();
+	public boolean getState(JSONObject row, JSONObject column) {
+		int i = Integer.parseInt(Simple_API.JSONToString(row));
+		int j = Integer.parseInt(Simple_API.JSONToString(column));
+		if (i < 0 || i >= this.rows) return false;
+		if (j < 0 || j >= this.columns) return false;
+		return this.board[i][j].isAlive();
 	}
 	
 	public void step() {
 		Cell[][] newBoard = new Cell[this.rows][this.columns];
 		for (int i = 0; i < this.rows; i++) {
 			for (int j = 0; j < this.columns; j++) {
-				newBoard[i][j] = new Cell(i, j);
+				newBoard[i][j] = new Cell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J"));
 			}
 		}
 		for (int i = 0; i < this.rows; i++) {
 			for (int j = 0; j < this.columns; j++) {
-				int aliveNeighbors = CountAliveNeighbors(i, j);
-				if (getState(i, j)) {
+				int aliveNeighbors = CountAliveNeighbors(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J"));
+				if (getState(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J"))) {
 					if (aliveNeighbors == 2 || aliveNeighbors == 3) {
-						newBoard[i][j].setAlive(true);
+						newBoard[i][j].setAlive(Simple_API.BooleanToJSON(true, "State"));
 					}
 				} else if (aliveNeighbors == 3) {
-					newBoard[i][j].setAlive(true);
+					newBoard[i][j].setAlive(Simple_API.BooleanToJSON(true, "State"));
 				}
 			}
 		}
@@ -111,10 +94,6 @@ public class Board {
 		return rows;
 	}
 	
-	public void setRows(int rows) {
-		this.rows = rows;
-	}
-	
 	// -------------------------------------------------------------
 	// ------------------------- GETTERS ---------------------------
 	// -------------------------------------------------------------
@@ -123,25 +102,17 @@ public class Board {
 		return columns;
 	}
 	
-	public void setColumns(int columns) {
-		this.columns = columns;
+	public Cell getCell(JSONObject i, JSONObject j) {
+		int row = Integer.parseInt(Simple_API.JSONToString(i));
+		int column = Integer.parseInt(Simple_API.JSONToString(j));
+		return this.board[row][column];
 	}
 	
-	public Cell[][] getBoard() {
-		return board;
-	}
-	
-	public void setBoard(Cell[][] board) {
-		this.board = board;
-	}
-	
-	public Cell getCell(int i, int j) {
-		return this.board[i][j];
-	}
-	
-	public void setCell(int i, int j) {
-		this.board[i][j].setX(i);
-		this.board[i][j].setY(j);
-		this.board[i][j].setAlive(true);
+	public void setCell(JSONObject i, JSONObject j) {
+		int row = Integer.parseInt(Simple_API.JSONToString(i));
+		int column = Integer.parseInt(Simple_API.JSONToString(j));
+		this.board[row][column].setX(i);
+		this.board[row][column].setY(j);
+		this.board[row][column].setAlive(Simple_API.BooleanToJSON(true, "State"));
 	}
 }

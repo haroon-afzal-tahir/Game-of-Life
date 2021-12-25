@@ -3,6 +3,7 @@ package com.InterfaceImplementation.GetFromBL;
 import com.BL.Game;
 import com.FactoryImplementation.BL_Factory;
 import com.Interfaces.SetToBL.DB_I;
+import com.JSON_API.Simple_API;
 
 import java.io.*;
 
@@ -72,10 +73,10 @@ public class DB_TXT implements DB_I {
             wFile.write(obj.getgenerations() + "\n");
             for (int i = 0; i < row; i++) {
                 for (int j = 0; j < col; j++) {
-                    if (obj.isAlive(i,j) == true) {
-                        wFile.write(obj.getBoard().getCell(i, j).getX() + "\n");
-                        wFile.write(obj.getBoard().getCell(i, j).getY() + "\n");
-
+                    if (obj.isAlive(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")) == true) {
+                        wFile.write(obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).getX() + "\n");
+                        wFile.write(obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).getY() + "\n");
+        
                     }
                 }
             }
@@ -167,19 +168,19 @@ public class DB_TXT implements DB_I {
             //System.out.println(columns);
     
     
-            ret_gameobj = new Game(rows, columns);
+            ret_gameobj = new Game(Simple_API.StringToJSON(String.valueOf(rows), "Row"), Simple_API.StringToJSON(String.valueOf(columns), "Column"));
             //generations
             line = bufferedReader.readLine();
             int generations = Integer.parseInt(line);
             //System.out.println(generations);
     
-            ret_gameobj.setgenerations(generations);
+            ret_gameobj.setgenerations(Simple_API.StringToJSON(String.valueOf(generations), "Generations"));
     
             //speed
     
             //System.out.println(speed);
-
-            ret_gameobj.setspeedfactor(1);
+    
+            ret_gameobj.setspeedfactor(Simple_API.StringToJSON("1", "Speed"));
 
             //read the indexes of the alive cells
             while (x != -1 && y !=-1) {
@@ -193,7 +194,7 @@ public class DB_TXT implements DB_I {
                 y = Integer.parseInt(line);
                 //System.out.println(y);
                 if(x!=-1 && y!=-1)
-                    ret_gameobj.getBoard().setCell(x, y);
+                    ret_gameobj.getBoard().setCell(Simple_API.StringToJSON(String.valueOf(x), "X"), Simple_API.StringToJSON(String.valueOf(y), "Y"));
             }
 
             // close the file

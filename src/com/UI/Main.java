@@ -5,6 +5,7 @@ import com.FactoryImplementation.UI_Factory;
 import com.Interfaces.GetFromBL.UI.UI_To_BL_Data_Transfer;
 import com.Interfaces.SetToBL.DB_I;
 import com.Interfaces.SetToBL.UI_I;
+import com.JSON_API.Simple_API;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -52,40 +53,38 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     Stage manageStates = new Stage();
     Stage saveState = new Stage();
     Stage deleteStates = new Stage();
-    
-    JSONObject object = new JSONObject();
-    
-    public void PlayMp3(Media media) {
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
-    }
-    
-    private int rows = 20, columns = 75;
-    private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
-    
-    UI_Factory UIFactory = new UI_Factory();
-    private BL_Factory game;
-    
-    public Main(DB_I obj) throws Exception {
-        game = new BL_Factory(rows, columns, UIFactory);
-        game.attachDB(obj);
-        SetGenerations(0);
-        start(new Stage());
-    }
-    
-    public static void main(String[] args) {
-        launch(args);
-    }
-    
-    public boolean checkIsAnyAlive() {
-        boolean isAnyAlive = false;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                if (getCellStatus(i, j)) {
-                    isAnyAlive = true;
-                    break;
-                }
-            }
+	
+	private int rows = 20, columns = 75;
+	private Grid_Button[][] grid_buttons = new Grid_Button[rows][columns];
+	
+	UI_Factory UIFactory = new UI_Factory();
+	private BL_Factory game;
+	
+	public static void main(String[] args) {
+		launch(args);
+	}
+	
+	public Main(DB_I obj) throws Exception {
+		game = new BL_Factory(Simple_API.StringToJSON(String.valueOf(rows), "Row"), Simple_API.StringToJSON(String.valueOf(columns), "Column"), UIFactory);
+		game.attachDB(obj);
+		SetGenerations(Simple_API.StringToJSON("0", "Generations"));
+		start(new Stage());
+	}
+	
+	public void PlayMp3(Media media) {
+		MediaPlayer mediaPlayer = new MediaPlayer(media);
+		mediaPlayer.play();
+	}
+	
+	public boolean checkIsAnyAlive() {
+		boolean isAnyAlive = false;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				if (Simple_API.JSONToBoolean(getCellStatus(Simple_API.StringToJSON(String.valueOf(i), "Row"), Simple_API.StringToJSON(String.valueOf(j), "Column")))) {
+					isAnyAlive = true;
+					break;
+				}
+			}
             if (isAnyAlive) {
                 break;
             }
@@ -128,51 +127,64 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
     }
     
     public void UpdateBoard() {
-        boolean isAllDead = true;
+		boolean isAllDead = true, isSame = true;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                if (!getCellStatus(i, j)) {
-                    grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
-                    grid_buttons[i][j].getStyleClass().add("UnselectedButton");
-                } else {
-                    isAllDead = false;
-                    grid_buttons[i][j].getStyleClass().removeAll("UnselectedButton");
-                    grid_buttons[i][j].getStyleClass().add("SelectedButton");
-                }
-            }
-        }
-        if (!isAllDead) {
-            PlayMp3(new Media(new File("src\\com\\Sound\\Game Running.mp3").toURI().toString()));
-        } else {
-            PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
-            setPlay(false);
-        }
-        SetGenerations(GetGenerations() + 1);
-    }
+				if (!Simple_API.JSONToBoolean(getCellStatus(Simple_API.StringToJSON(String.valueOf(i), "Row"), Simple_API.StringToJSON(String.valueOf(j), "Column")))) {
+					if (grid_buttons[i][j].getStyleClass().size() > 1) {
+						if (grid_buttons[i][j].getStyleClass().get(1) == "SelectedButton") {
+							isSame = false;
+						}
+					}
+					grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
+					grid_buttons[i][j].getStyleClass().add("UnselectedButton");
+				} else {
+					isAllDead = false;
+					if (grid_buttons[i][j].getStyleClass().size() > 1) {
+						if (grid_buttons[i][j].getStyleClass().get(1) == "UnselectedButton") {
+							isSame = false;
+						}
+					}
+					grid_buttons[i][j].getStyleClass().removeAll("UnselectedButton");
+					grid_buttons[i][j].getStyleClass().add("SelectedButton");
+				}
+			}
+		}
+		if (isSame) {
+			PlayMp3(new Media(new File("src\\com\\Sound\\Victory.mp3").toURI().toString()));
+			setPlay(Simple_API.BooleanToJSON(false, "Play"));
+		} else if (!isAllDead) {
+			PlayMp3(new Media(new File("src\\com\\Sound\\Game Running.mp3").toURI().toString()));
+		} else {
+			PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
+			setPlay(Simple_API.BooleanToJSON(false, "Play"));
+		}
+		SetGenerations(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(Simple_API.JSONToString(GetGenerations())) + 1), "Generations"));
+	}
 
     public GridPane GetButtons() {
-    
-        Zoom.setShowTickMarks(true);
-        Zoom.setShowTickLabels(true);
-        Zoom.setMajorTickUnit(0.25f);
-        Zoom.setBlockIncrement(0.1f);
-    
-        Speed.setShowTickMarks(true);
-        Speed.setShowTickLabels(true);
-        Speed.setMajorTickUnit(0.25f);
-        Speed.setBlockIncrement(0.1f);
-    
-        setZoomFactor(0);
-        setSpeedFactor(1);
-    
-        start.setMinWidth(100);
-        stop.setMinWidth(100);
-        next.setMinWidth(100);
-        reset.setMinWidth(100);
-        manage.setMinWidth(100);
-    
-        start.getStyleClass().removeAll();
-        start.getStyleClass().add("SimpleButton");
+	
+		Zoom.setShowTickMarks(true);
+		Zoom.setShowTickLabels(true);
+		Zoom.setMajorTickUnit(0.25f);
+		Zoom.setBlockIncrement(0.1f);
+	
+		Speed.setShowTickMarks(true);
+		Speed.setShowTickLabels(true);
+		Speed.setMajorTickUnit(0.25f);
+		Speed.setBlockIncrement(0.1f);
+	
+		setZoomFactor(Simple_API.StringToJSON("0", "Zoom"));
+		setSpeedFactor(Simple_API.StringToJSON("1", "Speed"));
+	
+		start.setMinWidth(100);
+		stop.setMinWidth(100);
+		next.setMinWidth(100);
+		reset.setMinWidth(100);
+		manage.setMinWidth(100);
+	
+		start.getStyleClass().removeAll();
+		start.getStyleClass().add("SimpleButton");
 
         stop.getStyleClass().removeAll();
         stop.getStyleClass().add("SimpleButton");
@@ -188,8 +200,8 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         manage.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                setPlay(false);
-                manageStates.show();
+				setPlay(Simple_API.BooleanToJSON(false, "Play"));
+				manageStates.show();
             }
         });
     
@@ -242,15 +254,15 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                 grid_buttons[i][j].setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-                        if (game.getBoard().getCell(finalI, finalJ).isAlive() == false) {
-                            grid_buttons[finalI][finalJ].getStyleClass().removeAll("UnselectedButton");
-                            grid_buttons[finalI][finalJ].getStyleClass().add("SelectedButton");
-                            setAlive(finalI, finalJ);
-                        } else {
-                            grid_buttons[finalI][finalJ].getStyleClass().removeAll("SelectedButton");
-                            grid_buttons[finalI][finalJ].getStyleClass().add("UnselectedButton");
-                            setDead(finalI, finalJ);
-                        }
+						if (game.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(finalI), "I"), Simple_API.StringToJSON(String.valueOf(finalJ), "J")).isAlive() == false) {
+							grid_buttons[finalI][finalJ].getStyleClass().removeAll("UnselectedButton");
+							grid_buttons[finalI][finalJ].getStyleClass().add("SelectedButton");
+							setAlive(Simple_API.StringToJSON(String.valueOf(finalI), "Row"), Simple_API.StringToJSON(String.valueOf(finalJ), "Column"));
+						} else {
+							grid_buttons[finalI][finalJ].getStyleClass().removeAll("SelectedButton");
+							grid_buttons[finalI][finalJ].getStyleClass().add("UnselectedButton");
+							setDead(Simple_API.StringToJSON(String.valueOf(finalI), "Row"), Simple_API.StringToJSON(String.valueOf(finalJ), "Column"));
+						}
                     }
                 });
 
@@ -266,73 +278,71 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                 reset.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        setPlay(false);
-                        SetGenerations(0);
-                        PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
-                        for (int i = 0; i < rows; i++) {
-                            for (int j = 0; j < columns; j++) {
-                                grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
-                                grid_buttons[i][j].getStyleClass().add("UnselectedButton");
-                                setDead(i, j);
-                            }
-                        }
-                    }
+						setPlay(Simple_API.BooleanToJSON(false, "State"));
+						SetGenerations(Simple_API.StringToJSON("0", "Generations"));
+						PlayMp3(new Media(new File("src\\com\\Sound\\Cells Dead.mp3").toURI().toString()));
+						for (int i = 0; i < rows; i++) {
+							for (int j = 0; j < columns; j++) {
+								grid_buttons[i][j].getStyleClass().removeAll("SelectedButton");
+								grid_buttons[i][j].getStyleClass().add("UnselectedButton");
+								setDead(Simple_API.StringToJSON(String.valueOf(i), "Row"), Simple_API.StringToJSON(String.valueOf(j), "Column"));
+							}
+						}
+					}
                 });
 
                 start.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        setPlay(true);
-                        StartGame();
-                    }
+						setPlay(Simple_API.BooleanToJSON(true, "State"));
+						StartGame();
+					}
                 });
 
                 stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        setPlay(false);
-                        if (checkIsAnyAlive()) {
-                            PlayMp3(new Media(new File("src\\com\\Sound\\Victory.mp3").toURI().toString()));
-                        } else {
-                            PlayMp3(new Media(new File("src\\com\\Sound\\Stop Press.mp3").toURI().toString()));
-                        }
-                    }
+						setPlay(Simple_API.BooleanToJSON(false, "State"));
+						if (checkIsAnyAlive()) {
+							PlayMp3(new Media(new File("src\\com\\Sound\\Victory.mp3").toURI().toString()));
+						} else {
+							PlayMp3(new Media(new File("src\\com\\Sound\\Stop Press.mp3").toURI().toString()));
+						}
+					}
                 });
 
                 int finalI1 = i;
                 int finalJ1 = j;
                 grid_buttons[i][j].setOnMouseDragged(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        gridPane.setPadding(new Insets(mouseEvent.getSceneY(), 20, 20, mouseEvent.getSceneX()));
-                    }
-                });
-    
-                gridPane.add(grid_buttons[i][j], j, i);
-            }
-        }
-
-        Speed.setValue(getSpeedFactor() / 500);
-        Zoom.setValue(getZoomFactor());
-    
-        Speed.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
+					@Override
+					public void handle(MouseEvent mouseEvent) {
+						gridPane.setPadding(new Insets(mouseEvent.getSceneY(), 20, 20, mouseEvent.getSceneX()));
+					}
+				});
+	
+				gridPane.add(grid_buttons[i][j], j, i);
+			}
+		}
+	
+		Speed.setValue(Float.parseFloat(Simple_API.JSONToString(getSpeedFactor())) / 500);
+		Zoom.setValue(Float.parseFloat(Simple_API.JSONToString(getZoomFactor())));
+	
+		Speed.setOnMouseDragged(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				setSpeedFactor(Simple_API.StringToJSON(String.valueOf((float) Speed.getValue()), "Speed"));
+			}
+		});
+	
+		Zoom.setOnMouseDragged(new EventHandler<MouseEvent>() {
+			@Override
             public void handle(MouseEvent mouseEvent) {
-                setSpeedFactor(((float) Speed.getValue()));
-            }
-        });
-    
-        Zoom.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                double prev = getZoomFactor(), next = Zoom.getValue();
+				double prev = Float.parseFloat(Simple_API.JSONToString(getZoomFactor())), next = Zoom.getValue();
                 gridPane.setScaleX(gridPane.getScaleX() + (next - prev));
-                gridPane.setScaleY(gridPane.getScaleY() + (next - prev));
-                setZoomFactor((float) next);
+				gridPane.setScaleY(gridPane.getScaleY() + (next - prev));
+				setZoomFactor(Simple_API.StringToJSON(String.valueOf((float) next), "Zoom"));
             }
         });
-
-        //gridPane.setPadding(new Insets(100, 20, 20, 20));
 
         return gridPane;
     }
@@ -384,8 +394,8 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         save.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                setPlay(false);
-                saveState.show();
+				setPlay(Simple_API.BooleanToJSON(false, "Play"));
+				saveState.show();
             }
         });
     
@@ -398,8 +408,8 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         delete.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                setPlay(false);
-                deleteStates.show();
+				setPlay(Simple_API.BooleanToJSON(false, "Play"));
+				deleteStates.show();
             }
         });
     
@@ -440,13 +450,13 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         loadState.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                game.load(loadlist.getSelectionModel().getSelectedItem() + ".txt");
-                UpdateBoard();
-                setZoomFactor(0);
-                setSpeedFactor(1);
-                loadStates.close();
-                manageStates.close();
-            }
+				game.load(loadlist.getSelectionModel().getSelectedItem() + ".txt");
+				UpdateBoard();
+				setZoomFactor(Simple_API.StringToJSON("0", "Zoom"));
+				setSpeedFactor(Simple_API.StringToJSON("1", "Speed"));
+				loadStates.close();
+				manageStates.close();
+			}
         });
         deleteState.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -580,79 +590,79 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
         
         loadStates.setTitle("All States");
         loadStates.setScene(viewStates);
-        loadStates.getIcons().add(new Image("com/Images/Icon.png"));
-        
-        saveState.setTitle("Save A State");
-        saveState.setScene(saveStates);
-        saveState.getIcons().add(new Image("com/Images/Icon.png"));
-        
-        deleteStates.setTitle("Delete A State");
-        deleteStates.setScene(deleteState);
-        deleteStates.getIcons().add(new Image("com/Images/Icon.png"));
-    }
-    
-    @Override
-    public void setAlive(int row, int column) {
-        game.getBoard().getCell(row, column).setAlive(true);
-    }
-    
-    @Override
-    public void setDead(int row, int column) {
-        game.getBoard().getCell(row, column).setDead(false);
-    }
-    
-    @Override
-    public boolean getCellStatus(int row, int column) {
-        return game.getBoard().getCell(row, column).isAlive();
-    }
-    
-    @Override
-    public void step() {
-        game.getBoard().step();
-    }
-    
-    @Override
-    public boolean getPlay() {
-        return game.getControl().getplay();
-    }
-    
-    @Override
-    public void setPlay(boolean play) {
-        game.getControl().setPlay(play);
-    }
-    
-    @Override
-    public float getZoomFactor() {
-        return game.getControl().getZoomfactor();
-    }
-    
-    @Override
-    public void setZoomFactor(float zf) {
-        game.getControl().setZoomFactor(zf);
-    }
-    
-    @Override
-    public float getSpeedFactor() {
-        return game.getControl().getSpeedFactor();
-    }
-    
-    @Override
-    public void setSpeedFactor(float sf) {
-        game.getControl().setSpeedFactor(sf);
-    }
-    
-    @Override
-    public void StartGame() {
-        game.StartGame();
-    }
-    
-    @Override
-    public void SetGenerations(int generations) {
-        game.getControl().setGenerations(generations);
-    }
-    
-    @Override
-    public int GetGenerations() {
-        return game.getControl().getGenerations();
-    }
+		loadStates.getIcons().add(new Image("com/Images/Icon.png"));
+	
+		saveState.setTitle("Save A State");
+		saveState.setScene(saveStates);
+		saveState.getIcons().add(new Image("com/Images/Icon.png"));
+	
+		deleteStates.setTitle("Delete A State");
+		deleteStates.setScene(deleteState);
+		deleteStates.getIcons().add(new Image("com/Images/Icon.png"));
+	}
+	
+	@Override
+	public void setAlive(JSONObject row, JSONObject column) {
+		game.getBoard().getCell(row, column).setAlive(Simple_API.BooleanToJSON(true, "State"));
+	}
+	
+	@Override
+	public void setDead(JSONObject row, JSONObject column) {
+		game.getBoard().getCell(row, column).setDead(Simple_API.BooleanToJSON(false, "State"));
+	}
+	
+	@Override
+	public JSONObject getCellStatus(JSONObject row, JSONObject column) {
+		return Simple_API.BooleanToJSON(game.getBoard().getCell(row, column).isAlive(), "State");
+	}
+	
+	@Override
+	public void step() {
+		game.getBoard().step();
+	}
+	
+	@Override
+	public JSONObject getPlay() {
+		return Simple_API.BooleanToJSON(game.getControl().getplay(), "State");
+	}
+	
+	@Override
+	public void setPlay(JSONObject play) {
+		game.getControl().setPlay(play);
+	}
+	
+	@Override
+	public JSONObject getZoomFactor() {
+		return Simple_API.StringToJSON(String.valueOf(game.getControl().getZoomfactor()), "Zoom");
+	}
+	
+	@Override
+	public void setZoomFactor(JSONObject zf) {
+		game.getControl().setZoomFactor(zf);
+	}
+	
+	@Override
+	public JSONObject getSpeedFactor() {
+		return Simple_API.StringToJSON(String.valueOf(game.getControl().getSpeedFactor()), "Speed");
+	}
+	
+	@Override
+	public void setSpeedFactor(JSONObject sf) {
+		game.getControl().setSpeedFactor(sf);
+	}
+	
+	@Override
+	public void StartGame() {
+		game.StartGame();
+	}
+	
+	@Override
+	public void SetGenerations(JSONObject generations) {
+		game.getControl().setGenerations(generations);
+	}
+	
+	@Override
+	public JSONObject GetGenerations() {
+		return Simple_API.StringToJSON(String.valueOf(game.getControl().getGenerations()), "Generations");
+	}
 }
