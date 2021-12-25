@@ -11,7 +11,7 @@ Contributers:
 	Saqlain Raza Shah Bukhari
 	
 Collaboration:
-	This is a team project, so, everyone participated equally. Haroon and Moazzan did the Business Layer. Zarin and Sadia were responsible for the Database Layer. And lastly, Saqlain and Saba were responsible for Graphical User Interface.
+	 This is a team project, so, everyone participated equally. Haroon and Moazzan did the Business Layer. Zarin and Sadia were responsible for the Database Layer. And lastly, Saqlain and Saba were responsible for Graphical User Interface.
 	
 Features:	
 	1. Manually draw a pattern by selecting/deselecting cells
