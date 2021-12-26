@@ -19,40 +19,40 @@ public class Controls {
 		generations = 0;
 	}
 	
-	public void setZoomFactor(JSONObject zm) {
-		this.zoomFactor = Float.parseFloat(Simple_API.JSONToString(zm));
-	}
-	
-	public void setPlay(JSONObject play) {
-		this.Play = Simple_API.JSONToBoolean(play);
-	}
-	
-	public float getSpeedFactor() {
-		return this.speedFactor * 500;
+	public JSONObject getSpeedFactor() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("Speed", this.speedFactor * 500);
+		return jsonObject;
 	}
 	
 	public void setSpeedFactor(JSONObject sf) {
 		this.speedFactor = Float.parseFloat(Simple_API.JSONToString(sf));
 	}
 	
-	public float getZoomfactor() {
-		return this.zoomFactor;
+	public JSONObject getplay() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("Play", this.Play);
+		return jsonObject;
 	}
 	
-	public boolean getplay() {
-		return this.Play;
+	public void setPlay(JSONObject play) {
+		Play = (Boolean) play.get("Play");
 	}
 	
-	public int getScore() {
-		return score;
+	public JSONObject getZoomFactor() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("Zoom", zoomFactor);
+		return jsonObject;
 	}
 	
-	public void setScore(JSONObject score) {
-		this.score = Integer.parseInt(Simple_API.JSONToString(score));
+	public void setZoomFactor(JSONObject zoom) {
+		zoomFactor = Float.parseFloat((String) zoom.get("Zoom"));
 	}
 	
-	public int getGenerations() {
-		return generations;
+	public JSONObject getGenerations() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("Generations", generations);
+		return jsonObject;
 	}
 	
 	public void setGenerations(JSONObject generations) {

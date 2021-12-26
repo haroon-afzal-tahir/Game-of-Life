@@ -2,7 +2,6 @@ package com.DB;
 
 
 import com.BL.DB_I;
-import com.FactoryImplementation.BL_Factory;
 import com.JSON_API.Simple_API;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -64,21 +63,6 @@ public class DB_SQL implements DB_I {
 				statement.setInt(4, (Integer) jsonArray.get(i + 1));
 				statement.executeUpdate();
 			}
-			//for (int i = 0; i < 20; i++) {
-			//for (int j = 0; j < 75; j++) {
-					/*
-					if (obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).isAlive()) {
-						statement = connection.prepareStatement(SQL4);
-						statement.setString(1, Simple_API.JSONToString(filename) + ".txt");
-						statement.setInt(2, id);
-						statement.setInt(3, obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).getX());
-						statement.setInt(4, obj.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J")).getY());
-						statement.executeUpdate();
-						id++;
-					}
-					*/
-			//}
-			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -107,7 +91,6 @@ public class DB_SQL implements DB_I {
 	
 	@Override
 	public JSONObject load(JSONObject stateName) {
-		BL_Factory obj = new BL_Factory(Simple_API.StringToJSON("20", "Row"), Simple_API.StringToJSON("75", "Column"));
 		JSONObject jsonObject = new JSONObject();
 		try {
 			Connection connection = DriverManager.getConnection(jdbcUrl, username, password);

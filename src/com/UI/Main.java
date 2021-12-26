@@ -1,8 +1,7 @@
 package com.UI;
 
-import com.BL.DB_I;
-import com.BL.UI_I;
-import com.BL.UI_To_BL_Data_Transfer;
+import com.BL.Cell;
+import com.BL.*;
 import com.FactoryImplementation.BL_Factory;
 import com.FactoryImplementation.UI_Factory;
 import com.JSON_API.Simple_API;
@@ -65,8 +64,12 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
 	}
 	
 	public Main(DB_I obj) throws Exception {
-		game = new BL_Factory(Simple_API.StringToJSON(String.valueOf(rows), "Row"), Simple_API.StringToJSON(String.valueOf(columns), "Column"), UIFactory);
-		game.attachDB(obj);
+		JSONObject UI = new JSONObject();
+		UI.put("UI", UIFactory);
+		game = new BL_Factory(Simple_API.StringToJSON(String.valueOf(rows), "Row"), Simple_API.StringToJSON(String.valueOf(columns), "Column"), UI);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("DB", obj);
+		game.attachDB(jsonObject);
 		SetGenerations(Simple_API.StringToJSON("0", "Generations"));
 		start(new Stage());
 	}
@@ -167,7 +170,6 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
 			PlayMp3(new Media(new File("src\\com\\Additional\\Cells Dead.mp3").toURI().toString()));
 			setPlay(Simple_API.BooleanToJSON(false, "Play"));
 		}
-		SetGenerations(Simple_API.StringToJSON(String.valueOf(Integer.parseInt(Simple_API.JSONToString(GetGenerations())) + 1), "Generations"));
 	}
 
     public GridPane GetButtons() {
@@ -262,7 +264,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                 grid_buttons[i][j].setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-						if (game.getBoard().getCell(Simple_API.StringToJSON(String.valueOf(finalI), "I"), Simple_API.StringToJSON(String.valueOf(finalJ), "J")).isAlive() == false) {
+						if ((Boolean) (((Cell) ((Board) game.getBoard().get("Board")).getCell(Simple_API.StringToJSON(String.valueOf(finalI), "I"), Simple_API.StringToJSON(String.valueOf(finalJ), "J")).get("Cell")).isAlive().get("State")) == false) {
 							grid_buttons[finalI][finalJ].getStyleClass().removeAll("UnselectedButton");
 							grid_buttons[finalI][finalJ].getStyleClass().add("SelectedButton");
 							setAlive(Simple_API.StringToJSON(String.valueOf(finalI), "Row"), Simple_API.StringToJSON(String.valueOf(finalJ), "Column"));
@@ -271,7 +273,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
 							grid_buttons[finalI][finalJ].getStyleClass().add("UnselectedButton");
 							setDead(Simple_API.StringToJSON(String.valueOf(finalI), "Row"), Simple_API.StringToJSON(String.valueOf(finalJ), "Column"));
 						}
-                    }
+					}
                 });
 
                 next.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -286,7 +288,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                 reset.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-						setPlay(Simple_API.BooleanToJSON(false, "State"));
+						setPlay(Simple_API.BooleanToJSON(false, "Play"));
 						SetGenerations(Simple_API.StringToJSON("0", "Generations"));
 						PlayMp3(new Media(new File("src\\com\\Additional\\Cells Dead.mp3").toURI().toString()));
 						for (int i = 0; i < rows; i++) {
@@ -302,7 +304,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                 start.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-						setPlay(Simple_API.BooleanToJSON(true, "State"));
+						setPlay(Simple_API.BooleanToJSON(true, "Play"));
 						StartGame();
 					}
                 });
@@ -310,7 +312,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
                 stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-						setPlay(Simple_API.BooleanToJSON(false, "State"));
+						setPlay(Simple_API.BooleanToJSON(false, "Play"));
 						if (checkIsAnyAlive()) {
 							PlayMp3(new Media(new File("src\\com\\Additional\\Victory.mp3").toURI().toString()));
 						} else {
@@ -333,7 +335,7 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
 		}
 	
 		Speed.setValue(Float.parseFloat(Simple_API.JSONToString(getSpeedFactor())) / 500);
-		Zoom.setValue(Float.parseFloat(Simple_API.JSONToString(getZoomFactor())));
+		Zoom.setValue((Float) getZoomFactor().get("Zoom"));
 	
 		Speed.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
@@ -611,52 +613,52 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
 	
 	@Override
 	public void setAlive(JSONObject row, JSONObject column) {
-		game.getBoard().getCell(row, column).setAlive(Simple_API.BooleanToJSON(true, "State"));
+		((com.BL.Cell) ((Board) game.getBoard().get("Board")).getCell(row, column).get("Cell")).setAlive(Simple_API.BooleanToJSON(true, "State"));
 	}
 	
 	@Override
 	public void setDead(JSONObject row, JSONObject column) {
-		game.getBoard().getCell(row, column).setDead(Simple_API.BooleanToJSON(false, "State"));
+		((com.BL.Cell) ((Board) game.getBoard().get("Board")).getCell(row, column).get("Cell")).setAlive(Simple_API.BooleanToJSON(false, "State"));
 	}
 	
 	@Override
 	public JSONObject getCellStatus(JSONObject row, JSONObject column) {
-		return Simple_API.BooleanToJSON(game.getBoard().getCell(row, column).isAlive(), "State");
+		return Simple_API.BooleanToJSON((Boolean) (((Cell) ((Board) game.getBoard().get("Board")).getCell(row, column).get("Cell")).isAlive().get("State")), "State");
 	}
 	
 	@Override
 	public void step() {
-		game.getBoard().step();
+		((Board) game.getBoard().get("Board")).step();
 	}
 	
 	@Override
 	public JSONObject getPlay() {
-		return Simple_API.BooleanToJSON(game.getControl().getplay(), "State");
+		return Simple_API.BooleanToJSON((Boolean) ((Controls) game.getControl().get("Controls")).getplay().get("Play"), "State");
 	}
 	
 	@Override
 	public void setPlay(JSONObject play) {
-		game.getControl().setPlay(play);
+		((Controls) game.getControl().get("Controls")).setPlay(play);
 	}
 	
 	@Override
 	public JSONObject getZoomFactor() {
-		return Simple_API.StringToJSON(String.valueOf(game.getControl().getZoomfactor()), "Zoom");
+		return ((Controls) game.getControl().get("Controls")).getZoomFactor();
 	}
 	
 	@Override
 	public void setZoomFactor(JSONObject zf) {
-		game.getControl().setZoomFactor(zf);
+		((Controls) game.getControl().get("Controls")).setZoomFactor(zf);
 	}
 	
 	@Override
 	public JSONObject getSpeedFactor() {
-		return Simple_API.StringToJSON(String.valueOf(game.getControl().getSpeedFactor()), "Speed");
+		return ((Controls) game.getControl().get("Controls")).getSpeedFactor();
 	}
 	
 	@Override
 	public void setSpeedFactor(JSONObject sf) {
-		game.getControl().setSpeedFactor(sf);
+		((Controls) game.getControl().get("Controls")).setSpeedFactor(sf);
 	}
 	
 	@Override
@@ -666,11 +668,11 @@ public class Main extends Application implements UI_To_BL_Data_Transfer, UI_I {
 	
 	@Override
 	public void SetGenerations(JSONObject generations) {
-		game.getControl().setGenerations(generations);
+		((Controls) game.getControl().get("Controls")).setGenerations(generations);
 	}
 	
 	@Override
 	public JSONObject GetGenerations() {
-		return Simple_API.StringToJSON(String.valueOf(game.getControl().getGenerations()), "Generations");
+		return ((Controls) game.getControl().get("Controls")).getGenerations();
 	}
 }

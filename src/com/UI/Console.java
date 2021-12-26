@@ -1,9 +1,7 @@
 package com.UI;
 
 import Colors.Color;
-import com.BL.DB_I;
-import com.BL.UI_I;
-import com.BL.UI_To_BL_Data_Transfer;
+import com.BL.*;
 import com.FactoryImplementation.BL_Factory;
 import com.FactoryImplementation.UI_Factory;
 import com.JSON_API.Simple_API;
@@ -19,21 +17,25 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 	
 	final static Scanner input = new Scanner(System.in);
 	
-	public Console(JSONObject rows, JSONObject columns, UI_Factory UIFactory) {
+	public Console(JSONObject rows, JSONObject columns, JSONObject UIFactory) {
 		this.rows = Integer.parseInt(Simple_API.JSONToString(rows));
 		this.columns = Integer.parseInt(Simple_API.JSONToString(columns));
-		this.UIFactory = UIFactory;
+		this.UIFactory = (UI_Factory) UIFactory.get("UI");
 		
-		game = new BL_Factory(Simple_API.StringToJSON(String.valueOf(this.rows), "Row"), Simple_API.StringToJSON(String.valueOf(this.columns), "Column"), this.UIFactory);
+		game = new BL_Factory(Simple_API.StringToJSON(String.valueOf(this.rows), "Row"), Simple_API.StringToJSON(String.valueOf(this.columns), "Column"), UIFactory);
 	}
 	
 	public static void main(DB_I test) {
 		UI_Factory UIFactory = new UI_Factory();
-		Console obj = new Console(Simple_API.StringToJSON("20", "Row"), Simple_API.StringToJSON("75", "Column"), UIFactory);
+		JSONObject UI = new JSONObject();
+		UI.put("UI", UIFactory);
+		Console obj = new Console(Simple_API.StringToJSON("20", "Row"), Simple_API.StringToJSON("75", "Column"), UI);
 		UIFactory.setConsole(obj);
 		obj.setZoomFactor(Simple_API.StringToJSON("100", "Zoom"));
 		obj.setSpeedFactor(Simple_API.StringToJSON("0.15", "Speed"));
-		obj.game.attachDB(test);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("DB", test);
+		obj.game.attachDB(jsonObject);
 		
 		char choice = 's';
 		while (checkInput(choice)) {
@@ -43,11 +45,11 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 			System.out.print(Color.RESET);
 			switch (choice) {
 				case 's':
-					obj.setPlay(Simple_API.BooleanToJSON(true, "State"));
+					obj.setPlay(Simple_API.BooleanToJSON(true, "Play"));
 					obj.StartGame();
 					break;
 				case 'S':
-					obj.setPlay(Simple_API.BooleanToJSON(false, "State"));
+					obj.setPlay(Simple_API.BooleanToJSON(false, "Play"));
 					break;
 				case '+':
 					if (Float.parseFloat(Simple_API.JSONToString(obj.getSpeedFactor())) < 0.25f) {
@@ -184,7 +186,7 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 		System.out.println();
 		
 		System.out.print("\t");
-		int zoom = Integer.parseInt(Simple_API.JSONToString(obj.getZoomFactor()));
+		float zoom = (Float) obj.getZoomFactor().get("Zoom");
 		for (int j = 0; j < obj.columns; j++) {
 			System.out.print(Color.CYAN);
 			System.out.print(j);
@@ -221,52 +223,52 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 	
 	@Override
 	public void setAlive(JSONObject row, JSONObject column) {
-		game.getBoard().getCell(row, column).setAlive(Simple_API.BooleanToJSON(true, "State"));
+		((com.BL.Cell) ((Board) game.getBoard().get("Board")).getCell(row, column).get("Cell")).setAlive(Simple_API.BooleanToJSON(true, "State"));
 	}
 	
 	@Override
 	public void setDead(JSONObject row, JSONObject column) {
-		game.getBoard().getCell(row, column).setDead(Simple_API.BooleanToJSON(false, "State"));
+		((com.BL.Cell) ((Board) game.getBoard().get("Board")).getCell(row, column).get("Cell")).setAlive(Simple_API.BooleanToJSON(false, "State"));
 	}
 	
 	@Override
 	public JSONObject getCellStatus(JSONObject row, JSONObject column) {
-		return Simple_API.BooleanToJSON(game.getBoard().getCell(row, column).isAlive(), "State");
+		return Simple_API.BooleanToJSON((Boolean) (((Cell) ((Board) game.getBoard().get("Board")).getCell(row, column).get("Cell")).isAlive().get("State")), "State");
 	}
 	
 	@Override
 	public void step() {
-		game.getBoard().step();
+		((Board) game.getBoard().get("Board")).step();
 	}
 	
 	@Override
 	public JSONObject getPlay() {
-		return Simple_API.BooleanToJSON(game.getControl().getplay(), "State");
+		return Simple_API.BooleanToJSON((Boolean) ((Controls) game.getControl().get("Controls")).getplay().get("Play"), "State");
 	}
 	
 	@Override
 	public void setPlay(JSONObject play) {
-		game.getControl().setPlay(play);
+		((Controls) game.getControl().get("Controls")).setPlay(play);
 	}
 	
 	@Override
 	public JSONObject getZoomFactor() {
-		return Simple_API.StringToJSON(String.valueOf(game.getControl().getZoomfactor()), "Zoom");
+		return ((Controls) game.getControl().get("Controls")).getZoomFactor();
 	}
 	
 	@Override
 	public void setZoomFactor(JSONObject zf) {
-		game.getControl().setZoomFactor(zf);
+		((Controls) game.getControl().get("Controls")).setZoomFactor(zf);
 	}
 	
 	@Override
 	public JSONObject getSpeedFactor() {
-		return Simple_API.StringToJSON(String.valueOf(game.getControl().getSpeedFactor()), "Speed");
+		return ((Controls) game.getControl().get("Controls")).getSpeedFactor();
 	}
 	
 	@Override
 	public void setSpeedFactor(JSONObject sf) {
-		game.getControl().setSpeedFactor(sf);
+		((Controls) game.getControl().get("Controls")).setSpeedFactor(sf);
 	}
 	
 	@Override
@@ -276,11 +278,11 @@ public class Console implements UI_To_BL_Data_Transfer, UI_I {
 	
 	@Override
 	public void SetGenerations(JSONObject generations) {
-		game.getControl().setGenerations(generations);
+		((Controls) game.getControl().get("Controls")).setGenerations(generations);
 	}
 	
 	@Override
 	public JSONObject GetGenerations() {
-		return Simple_API.StringToJSON(String.valueOf(game.getControl().getGenerations()), "Generations");
+		return ((Controls) game.getControl().get("Controls")).getGenerations();
 	}
 }

@@ -20,37 +20,21 @@ public class Cell {
 		isAlive = false;
 	}
 	
-	public void setValues(JSONObject x, JSONObject y, JSONObject flag) {
-		setX(x);
-		setY(y);
-		setAlive(flag);
-	}
-	
-	public int getX() {
-		return x;
-	}
-	
 	public void setX(JSONObject x) {
 		this.x = Integer.parseInt(Simple_API.JSONToString(x));
-	}
-	
-	public int getY() {
-		return y;
 	}
 	
 	public void setY(JSONObject y) {
 		this.y = Integer.parseInt(Simple_API.JSONToString(y));
 	}
 	
-	public boolean isAlive() {
-		return isAlive;
+	public JSONObject isAlive() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("State", isAlive);
+		return jsonObject;
 	}
 	
 	public void setAlive(JSONObject alive) {
 		isAlive = Simple_API.JSONToBoolean(alive);
-	}
-	
-	public void setDead(JSONObject dead) {
-		isAlive = Simple_API.JSONToBoolean(dead);
 	}
 }

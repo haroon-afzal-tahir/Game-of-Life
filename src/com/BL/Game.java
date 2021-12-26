@@ -8,19 +8,18 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Game implements Runnable {
-    private Board board;
-    private Controls controls;
-    private DB_I DB_Listener;
-    private int generations;
+	private Board board;
+	private Controls controls;
+	private DB_I DB_Listener;
+	private int generations;
 	
 	UI_Factory UIFactory = new UI_Factory();
 	
-	public Game(JSONObject rows, JSONObject cols, UI_Factory UIFactory) {
+	public Game(JSONObject rows, JSONObject cols, JSONObject UIFactory) {
 		board = new Board(rows, cols);
 		controls = new Controls(Simple_API.StringToJSON("100", "Zoom"), Simple_API.StringToJSON("0", "Speed"), Simple_API.BooleanToJSON(true, "State"));
-		this.UIFactory = UIFactory;
+		this.UIFactory = (UI_Factory) UIFactory.get("UI");
 	}
-	
 	
 	public Game(JSONObject rows, JSONObject cols) {
 		board = new Board(rows, cols);
@@ -30,28 +29,30 @@ public class Game implements Runnable {
 	public Game() {
 	}
 	
-	public Board getBoard() {
-		return board;
+	public JSONObject getBoard() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("Board", board);
+		return jsonObject;
 	}
 	
-	public Controls getControl() {
-		return controls;
+	public JSONObject getControl() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("Controls", controls);
+		return jsonObject;
 	}
 	
-	public void attachDB(DB_I list) {
-		this.DB_Listener = list;
+	public void attachDB(JSONObject list) {
+		this.DB_Listener = (DB_I) list.get("DB");
 	}
 	
-	public void setspeedfactor(JSONObject sf) {
-		this.controls.setSpeedFactor(sf);
-	}
-	
-	public float getspeedfactor() {
+	public JSONObject getspeedfactor() {
 		return this.controls.getSpeedFactor();
 	}
 	
-	public int getgenerations() {
-		return generations;
+	public JSONObject getgenerations() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("Generations", generations);
+		return jsonObject;
 	}
 	
 	public void setgenerations(JSONObject gen) {
@@ -60,9 +61,13 @@ public class Game implements Runnable {
 	
 	public void save(JSONObject filename) {
 		JSONArray Cells = new JSONArray();
+		
+		board = (Board) this.getBoard().get("Board");
+		controls = (Controls) this.getControl().get("Controls");
 		for (int i = 0; i < 20; i++) {
 			for (int j = 0; j < 75; j++) {
-				if (this.getBoard().getState(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J"))) {
+				JSONObject jsonObject = board.getState(Simple_API.StringToJSON(String.valueOf(i), "I"), Simple_API.StringToJSON(String.valueOf(j), "J"));
+				if ((Boolean) jsonObject.get("State")) {
 					Cells.add(i);
 					Cells.add(j);
 				}
@@ -70,8 +75,8 @@ public class Game implements Runnable {
 		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("AliveCells", Cells);
-		jsonObject.put("Speed", this.getControl().getSpeedFactor());
-		jsonObject.put("Generations", this.getControl().getGenerations());
+		jsonObject.put("Speed", controls.getSpeedFactor());
+		jsonObject.put("Generations", controls.getGenerations());
 		DB_Listener.save(jsonObject, filename);
 	}
 	
@@ -96,30 +101,25 @@ public class Game implements Runnable {
 		DB_Listener.delete(statename);
 	}
 	
-	public boolean isAlive(JSONObject row, JSONObject column) {
-		return board.isAlive(row, column);
-	}
-	
 	@Override
 	public void run() {
 		Main UI = UIFactory.getUI();
 		Console console = UIFactory.getConsole();
-		while (this.controls.getplay() == true) {
-            if (UI != null) {
-                UI.step();
-                UI.UpdateBoard();
-            } else {
-                console.step();
-                console.print(console);
-            }
-			setgenerations(Simple_API.StringToJSON(String.valueOf(getgenerations() + 1), "Generations"));
-            try {
-                Thread.sleep((long) (((1 / (getspeedfactor())) * 100000)));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+		while ((Boolean) this.controls.getplay().get("Play") == true) {
+			if (UI != null) {
+				UI.step();
+				UI.UpdateBoard();
+			} else {
+				console.step();
+				console.print(console);
+			}
+			try {
+				Thread.sleep((long) (((1 / (Float) getspeedfactor().get("Speed")) * 100000)));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
     
     public void StartGame() {
 		Thread start = new Thread(this);
